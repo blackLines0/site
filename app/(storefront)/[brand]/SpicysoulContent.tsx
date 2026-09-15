@@ -120,7 +120,7 @@ export function SpicysoulContent() {
         </div>
       </section>
 
-      <SiteFooter />
+      <SiteFooter brand="spicysoul" />
     </div>
   );
 }

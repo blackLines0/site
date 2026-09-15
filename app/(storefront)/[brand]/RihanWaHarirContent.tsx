@@ -108,7 +108,7 @@ export function RihanWaHarirContent() {
         </div>
       </div>
 
-      <SiteFooter />
+      <SiteFooter brand="rihan-wa-harir" />
     </div>
   );
 }

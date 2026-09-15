@@ -1,9 +1,19 @@
 import Link from "next/link";
+import type { BrandSlug } from "@/lib/catalog";
 
-const SOCIAL_LINKS = [
+// Only Instagram is live per brand for now — the other networks stay as
+// visual placeholders (href="#") until those accounts exist.
+const INSTAGRAM_URLS: Record<BrandSlug, string> = {
+  "capsule-textile": "https://www.instagram.com/capsuletextile/",
+  spicysoul: "https://www.instagram.com/spicysouul/",
+  "rihan-wa-harir": "https://www.instagram.com/rihanwaharir/",
+};
+
+function socialLinks(brand?: BrandSlug) {
+  return [
   {
     name: "Instagram",
-    href: "#",
+    href: brand ? INSTAGRAM_URLS[brand] : "#",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <rect x="3" y="3" width="18" height="18" rx="5" />
@@ -41,9 +51,10 @@ const SOCIAL_LINKS = [
       </svg>
     ),
   },
-];
+  ];
+}
 
-export function SiteFooter() {
+export function SiteFooter({ brand }: { brand?: BrandSlug } = {}) {
   return (
     <footer>
       <div className="wrap">
@@ -52,8 +63,14 @@ export function SiteFooter() {
             <span className="wordmark">Blacklines</span>
             <p>Une entreprise togolaise engagée dans la valorisation du savoir-faire et de la production locale.</p>
             <div className="footer-social">
-              {SOCIAL_LINKS.map((social) => (
-                <a key={social.name} href={social.href} aria-label={social.name} className="footer-social-icon">
+              {socialLinks(brand).map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  aria-label={social.name}
+                  className="footer-social-icon"
+                  {...(social.href !== "#" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                >
                   {social.icon}
                 </a>
               ))}

@@ -104,7 +104,7 @@ export function CapsuleTextileContent() {
         </div>
       </section>
 
-      <SiteFooter />
+      <SiteFooter brand="capsule-textile" />
     </div>
   );
 }
