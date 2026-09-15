@@ -355,7 +355,7 @@ export default function ProductPage({
               <h4>Laisser un avis</h4>
               {isAuthenticated ? (
                 reviewSuccess ? (
-                  <p className="review-note">Merci ! Ton avis sera visible après validation.</p>
+                  <p className="review-note">Merci pour ton avis !</p>
                 ) : (
                   <form onSubmit={handleReviewSubmit}>
                     <div className="star-input">
