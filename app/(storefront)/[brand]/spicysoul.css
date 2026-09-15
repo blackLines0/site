@@ -27,6 +27,9 @@
 .spicysoul-theme .header-actions{display:flex; align-items:center; gap:22px;}
 .spicysoul-theme .icon-btn{background:none; padding:0; width:31px; height:31px; display:flex; align-items:center; justify-content:center; color:var(--sp-black); flex-shrink:0;}
 .spicysoul-theme .icon-btn svg{width:19px; height:19px; flex-shrink:0;}
+.spicysoul-theme .account-link{display:flex; align-items:center; gap:7px; color:var(--sp-black); flex-shrink:0;}
+.spicysoul-theme .account-link svg{width:19px; height:19px; flex-shrink:0;}
+.spicysoul-theme .account-name{font-size:13px; font-weight:700; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .spicysoul-theme .menu-toggle{display:none; background:none; padding:0; width:31px; height:31px; align-items:center; justify-content:center; color:var(--sp-black); flex-shrink:0; margin-right:14px;}
 .spicysoul-theme .menu-toggle svg{width:22px; height:22px;}
 .spicysoul-theme .mobile-nav{display:none; flex-direction:column; border-top:1px solid var(--bl-ligne); padding:8px 32px 16px;}
@@ -98,6 +101,13 @@
 .spicysoul-theme .card-name{font-size:15.5px; margin-top:5px; font-weight:600; text-transform:none;}
 .spicysoul-theme .card-price{font-size:14px; margin-top:6px; font-weight:700;}
 
+@keyframes skel-pulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
+.spicysoul-theme .skel-img{aspect-ratio:3/4; background:#e8e8e8; animation:skel-pulse 1.4s ease-in-out infinite;}
+.spicysoul-theme .skel-line{height:11px; background:#e8e8e8; border-radius:3px; margin-top:14px; animation:skel-pulse 1.4s ease-in-out infinite;}
+.spicysoul-theme .skel-line.sm{width:40%; margin-top:16px;}
+.spicysoul-theme .skel-line.md{width:75%;}
+.spicysoul-theme .skel-line.lg{width:50%; margin-top:8px;}
+
 .spicysoul-theme footer{padding:70px 0 40px;}
 .spicysoul-theme .footer-top{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:56px; border-bottom:1px solid var(--bl-ligne);}
 .spicysoul-theme .footer-brand p{font-size:13.5px; color:var(--bl-gris); margin-top:16px; line-height:1.6; max-width:32ch; text-transform:none; font-weight:400;}
@@ -130,6 +140,7 @@
   .spicysoul-theme .wrap{padding:0 18px;}
   .spicysoul-theme .header-inner{height:64px;}
   .spicysoul-theme .wordmark{display:none;}
+  .spicysoul-theme .account-name{display:none;}
   .spicysoul-theme .mood-grid{grid-template-columns:1fr; grid-template-rows:repeat(4,160px);}
   .spicysoul-theme .mc1,.spicysoul-theme .mc2,.spicysoul-theme .mc3,.spicysoul-theme .mc4{grid-column:1; grid-row:auto;}
 }

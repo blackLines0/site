@@ -27,6 +27,9 @@
 .capsule-theme .header-actions{display:flex; align-items:center; gap:22px;}
 .capsule-theme .icon-btn{background:none; padding:0; width:31px; height:31px; display:flex; align-items:center; justify-content:center; color:var(--noir); flex-shrink:0;}
 .capsule-theme .icon-btn svg{width:19px; height:19px; flex-shrink:0;}
+.capsule-theme .account-link{display:flex; align-items:center; gap:7px; color:var(--noir); flex-shrink:0;}
+.capsule-theme .account-link svg{width:19px; height:19px; flex-shrink:0;}
+.capsule-theme .account-name{font-size:13px; font-weight:600; font-family:'Inter',sans-serif; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .capsule-theme .menu-toggle{display:none; background:none; padding:0; width:31px; height:31px; align-items:center; justify-content:center; color:var(--noir); flex-shrink:0; margin-right:14px;}
 .capsule-theme .menu-toggle svg{width:22px; height:22px;}
 .capsule-theme .mobile-nav{display:none; flex-direction:column; border-top:1px solid var(--bl-ligne); padding:8px 32px 16px;}
@@ -93,6 +96,13 @@
 .capsule-theme .card-name{font-size:15.5px; margin-top:5px; font-weight:600; font-family:'Bricolage Grotesque', sans-serif;}
 .capsule-theme .card-price{font-size:14px; margin-top:6px; font-weight:600;}
 
+@keyframes skel-pulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
+.capsule-theme .skel-img{aspect-ratio:3/4; border-radius:10px; background:#EAE6DA; animation:skel-pulse 1.4s ease-in-out infinite;}
+.capsule-theme .skel-line{height:11px; background:#EAE6DA; border-radius:3px; margin-top:14px; animation:skel-pulse 1.4s ease-in-out infinite;}
+.capsule-theme .skel-line.sm{width:40%; margin-top:16px;}
+.capsule-theme .skel-line.md{width:75%;}
+.capsule-theme .skel-line.lg{width:50%; margin-top:8px;}
+
 .capsule-theme footer{padding:70px 0 40px;}
 .capsule-theme .footer-top{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:56px; border-bottom:1px solid var(--bl-ligne);}
 .capsule-theme .footer-brand p{font-size:13.5px; color:var(--bl-gris); margin-top:16px; line-height:1.6; max-width:32ch; font-family:'Inter',sans-serif;}
@@ -123,5 +133,6 @@
   .capsule-theme .wrap{padding:0 18px;}
   .capsule-theme .header-inner{height:64px;}
   .capsule-theme .wordmark{display:none;}
+  .capsule-theme .account-name{display:none;}
   .capsule-theme .mission-grid{grid-template-columns:1fr;}
 }

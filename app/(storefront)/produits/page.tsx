@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { ProductGridSkeleton } from "@/components/ProductGridSkeleton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
@@ -110,7 +111,7 @@ function ProduitsPageInner() {
 
           <div className="products">
             {loading ? (
-              <p style={{ color: "var(--gris)" }}>Chargement du catalogue.</p>
+              <ProductGridSkeleton />
             ) : products.length === 0 ? (
               <p style={{ color: "var(--gris)" }}>Aucun produit ne correspond à ces critères.</p>
             ) : (

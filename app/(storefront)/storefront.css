@@ -70,6 +70,9 @@ nav.main-nav a{font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase
 .header-actions{display:flex; align-items:center; gap:22px;}
 .icon-btn{background:none; padding:0; width:31px; height:31px; display:flex; align-items:center; justify-content:center; color:var(--noir); position:relative; flex-shrink:0;}
 .icon-btn svg{width:19px; height:19px; flex-shrink:0;}
+.account-link{display:flex; align-items:center; gap:7px; color:var(--noir); flex-shrink:0;}
+.account-link svg{width:19px; height:19px; flex-shrink:0;}
+.account-name{font-size:13px; font-weight:600; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .cart-count{position:absolute; top:-2px; right:-4px; background:var(--noir); color:var(--blanc); font-size:9px; font-weight:700; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
 .menu-toggle{
   display:none; background:none; padding:0; width:31px; height:31px; align-items:center; justify-content:center;
@@ -277,6 +280,13 @@ nav.main-nav a{font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase
 }
 .card-name{font-size:15.5px; margin-top:5px; font-weight:500;}
 .card-price{font-size:14px; margin-top:6px; color:var(--noir); font-weight:600;}
+
+@keyframes skel-pulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
+.skel-img{aspect-ratio:3/4; background:var(--gris-clair); border-radius:2px; animation:skel-pulse 1.4s ease-in-out infinite;}
+.skel-line{height:11px; background:var(--gris-clair); border-radius:3px; margin-top:14px; animation:skel-pulse 1.4s ease-in-out infinite;}
+.skel-line.sm{width:40%; margin-top:16px;}
+.skel-line.md{width:75%;}
+.skel-line.lg{width:50%; margin-top:8px;}
 
 /* ---------- STORY / MAKER STRIP ---------- */
 .story{
@@ -575,6 +585,7 @@ footer{padding:70px 0 40px;}
   .gallery-thumbs{grid-template-columns:repeat(3,1fr);}
   .header-inner{height:64px;}
   .wordmark{display:none;}
+  .account-name{display:none;}
   .header-actions{gap:14px;}
   .filters{gap:8px;}
   .chip{padding:8px 14px; font-size:11px;}

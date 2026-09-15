@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
 import { useCustomerAuth } from "@/components/CustomerAuthContext";
 import { apiFetch } from "@/lib/api";
 import { formatPrice } from "@/lib/catalog";
+import { getFavorites } from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 import "../storefront.css";
 
@@ -46,6 +48,12 @@ export default function ComptePage() {
   const { data: orders = null } = useQuery({
     queryKey: queryKeys.myOrders,
     queryFn: () => apiFetch<OrderHistoryItem[]>("/customers/me/orders"),
+    enabled: isAuthenticated,
+  });
+
+  const { data: favorites = null } = useQuery({
+    queryKey: queryKeys.favorites,
+    queryFn: getFavorites,
     enabled: isAuthenticated,
   });
 
@@ -100,6 +108,41 @@ export default function ComptePage() {
                 <div className="amount">{formatPrice(order.montantTotal)}</div>
               </div>
             ))
+          )}
+
+          <h2 className="display" style={{ fontSize: 20, margin: "40px 0 16px" }}>Mes favoris</h2>
+
+          {favorites === null ? (
+            <p style={{ color: "var(--gris)" }}>Chargement...</p>
+          ) : favorites.length === 0 ? (
+            <p style={{ color: "var(--gris)" }}>Aucun produit enregistré pour le moment.</p>
+          ) : (
+            <div className="products">
+              {favorites.map((favorite) => (
+                <Link className="card" href={`/${favorite.product.brand.slug}/${favorite.product.slug}`} key={favorite.id}>
+                  <div className="card-img">
+                    {favorite.product.images[0] ? (
+                      <img src={favorite.product.images[0]} alt={favorite.product.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : null}
+                    <div className="corner" />
+                  </div>
+                  <div className="card-brand">{favorite.product.brand.nom}</div>
+                  <div className="card-name">{favorite.product.nom}</div>
+                  <div className="card-price">
+                    {favorite.product.prixPromo ? (
+                      <>
+                        <span style={{ textDecoration: "line-through", opacity: 0.5, marginRight: 8, fontWeight: 500 }}>
+                          {formatPrice(favorite.product.prix)}
+                        </span>
+                        {formatPrice(favorite.product.prixPromo)}
+                      </>
+                    ) : (
+                      formatPrice(favorite.product.prix)
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
           )}
         </div>
       </section>

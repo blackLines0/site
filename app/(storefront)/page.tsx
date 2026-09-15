@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { HeroGallery } from "@/components/HeroGallery";
+import { ProductGridSkeleton } from "@/components/ProductGridSkeleton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
@@ -18,14 +19,13 @@ export default function HomePage() {
     queryKey: queryKeys.brands,
     queryFn: getBrands,
   });
-  const { data: recentProducts = [] } = useQuery({
-    queryKey: queryKeys.products({ sort: "recent" }),
-    queryFn: () => getProducts({ sort: "recent" }),
+  const productFilters = { sort: "recent" as const, brand: filter === "all" ? undefined : filter };
+  const { data: recentProducts = [], isLoading: loadingProducts } = useQuery({
+    queryKey: queryKeys.products(productFilters),
+    queryFn: () => getProducts(productFilters),
   });
-  const products = recentProducts.slice(0, 8);
 
-  const visibleProducts =
-    filter === "all" ? products : products.filter((p) => p.brand.slug === filter);
+  const visibleProducts = recentProducts.slice(0, 8);
 
   return (
     <>
@@ -122,7 +122,9 @@ export default function HomePage() {
             ))}
           </div>
           <div className="products">
-            {visibleProducts.length === 0 ? (
+            {loadingProducts ? (
+              <ProductGridSkeleton />
+            ) : visibleProducts.length === 0 ? (
               <p style={{ color: "var(--gris)" }}>Aucun produit pour le moment.</p>
             ) : (
               visibleProducts.map((product) => (

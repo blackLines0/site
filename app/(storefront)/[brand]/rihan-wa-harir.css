@@ -30,6 +30,9 @@
 .rihan-theme .header-actions{display:flex; align-items:center; gap:22px;}
 .rihan-theme .icon-btn{background:none; padding:0; width:31px; height:31px; display:flex; align-items:center; justify-content:center; color:var(--rh-black); flex-shrink:0;}
 .rihan-theme .icon-btn svg{width:19px; height:19px; flex-shrink:0;}
+.rihan-theme .account-link{display:flex; align-items:center; gap:7px; color:var(--rh-black); flex-shrink:0;}
+.rihan-theme .account-link svg{width:19px; height:19px; flex-shrink:0;}
+.rihan-theme .account-name{font-size:13px; font-weight:600; font-family:'Inter',sans-serif; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .rihan-theme .menu-toggle{display:none; background:none; padding:0; width:31px; height:31px; align-items:center; justify-content:center; color:var(--rh-green); flex-shrink:0; margin-right:14px;}
 .rihan-theme .menu-toggle svg{width:22px; height:22px;}
 .rihan-theme .mobile-nav{display:none; flex-direction:column; border-top:1px solid var(--bl-ligne); padding:8px 32px 16px;}
@@ -83,6 +86,13 @@
 .rihan-theme .card-name{font-size:18px; margin-top:6px; font-weight:600; font-family:'Cormorant Garamond', serif;}
 .rihan-theme .card-price{font-size:13.5px; margin-top:6px; color:#6a6a5c; font-family:'Inter',sans-serif;}
 
+@keyframes skel-pulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
+.rihan-theme .skel-img{aspect-ratio:3/4; border-radius:4px; background:var(--rh-cream); animation:skel-pulse 1.4s ease-in-out infinite;}
+.rihan-theme .skel-line{height:11px; background:var(--rh-cream); border-radius:3px; margin-top:14px; animation:skel-pulse 1.4s ease-in-out infinite;}
+.rihan-theme .skel-line.sm{width:40%; margin-top:16px;}
+.rihan-theme .skel-line.md{width:75%;}
+.rihan-theme .skel-line.lg{width:50%; margin-top:8px;}
+
 .rihan-theme .contact-strip{background:var(--rh-green); color:var(--rh-cream); padding:50px 0; text-align:center;}
 .rihan-theme .contact-strip .eyebrow{color:var(--rh-gold);}
 .rihan-theme .contact-strip .phone{font-family:'Cormorant Garamond', serif; font-weight:600; font-size:28px; margin-top:10px; color:var(--rh-ivory);}
@@ -114,6 +124,7 @@
   .rihan-theme .wrap{padding:0 18px;}
   .rihan-theme .header-inner{height:64px;}
   .rihan-theme .wordmark{display:none;}
+  .rihan-theme .account-name{display:none;}
   .rihan-theme .brand-logo{height:72px;}
   .rihan-theme .cat-grid{grid-template-columns:1fr;}
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { ProductGridSkeleton } from "@/components/ProductGridSkeleton";
 import { getBrand, getProducts, formatPrice } from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 
@@ -41,7 +42,7 @@ export function BrandCollection({ brandSlug, brandNom }: { brandSlug: string; br
       </div>
       <div className="products">
         {loading ? (
-          <p style={{ color: "var(--gris)" }}>Chargement de la collection.</p>
+          <ProductGridSkeleton />
         ) : products.length === 0 ? (
           <p style={{ color: "var(--gris)" }}>Aucun produit disponible pour le moment.</p>
         ) : (

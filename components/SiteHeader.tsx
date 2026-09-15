@@ -4,10 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { AnnouncementBanner } from "./AnnouncementBanner";
 import { useCart } from "./CartContext";
+import { useCustomerAuth } from "./CustomerAuthContext";
 import type { BrandSlug } from "@/lib/catalog";
 
 export function SiteHeader({ active }: { active?: BrandSlug }) {
   const { count } = useCart();
+  const { customer } = useCustomerAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const linkClass = (brand: BrandSlug) =>
     `cut-link${active === brand ? " active" : ""}`;
@@ -39,11 +41,12 @@ export function SiteHeader({ active }: { active?: BrandSlug }) {
             <Link className="cut-link" href="/a-propos">À propos</Link>
           </nav>
           <div className="header-actions">
-            <Link className="icon-btn" href="/compte" aria-label="Compte">
+            <Link className="account-link" href="/compte" aria-label="Compte">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="8" r="4" />
                 <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" />
               </svg>
+              {customer ? <span className="account-name">{customer.nom.split(" ")[0]}</span> : null}
             </Link>
             <Link className="icon-btn" href="/panier" aria-label="Panier">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
