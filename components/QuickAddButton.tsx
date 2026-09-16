@@ -8,10 +8,12 @@ export function QuickAddButton({ product }: { product: Product }) {
   const { addLine } = useCart();
   const [done, setDone] = useState(false);
 
-  const variant = product.variants.length
-    ? product.variants.find((v) => v.stock > 0) ?? product.variants[0]
-    : null;
-  const stock = product.variants.length ? variant?.stock ?? 0 : product.stock;
+  // `variants` is only present once the backend includes it on the list
+  // endpoint (not guaranteed — frontend and backend deploy independently),
+  // so this stays defensive rather than assuming the shape.
+  const variants = product.variants ?? [];
+  const variant = variants.length ? variants.find((v) => v.stock > 0) ?? variants[0] : null;
+  const stock = variants.length ? variant?.stock ?? 0 : product.stock;
   const canAdd = stock > 0;
 
   function handleClick(e: React.MouseEvent) {
