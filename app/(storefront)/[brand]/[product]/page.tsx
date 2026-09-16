@@ -7,7 +7,7 @@ import { notFound, useRouter } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
-import { useCart } from "@/components/CartContext";
+import { lineKey, useCart } from "@/components/CartContext";
 import { useCustomerAuth } from "@/components/CustomerAuthContext";
 import {
   addFavorite,
@@ -40,14 +40,13 @@ export default function ProductPage({
   const { brand: brandSlug, product: productSlug } = use(params);
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { addLine } = useCart();
+  const { addLine, lines } = useCart();
   const { isAuthenticated } = useCustomerAuth();
 
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
   const [openSection, setOpenSection] = useState<string | null>("livraison");
   const [activeThumb, setActiveThumb] = useState(0);
-  const [added, setAdded] = useState(false);
 
   const [reviewNote, setReviewNote] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
@@ -143,6 +142,10 @@ export default function ProductPage({
   const unitPrice = product.prixPromo ?? product.prix;
   const thumbs = product.images.length ? product.images : [];
 
+  const inCartQty =
+    lines.find((l) => lineKey(l) === lineKey({ productId: product.id, variantId: selectedVariantId ?? undefined }))
+      ?.qty ?? 0;
+
   const stockClass = product.statut === "epuise" ? "out" : product.statut === "stock_faible" ? "low" : "";
   const stockLabel =
     product.statut === "epuise"
@@ -167,8 +170,6 @@ export default function ProductPage({
       },
       qty,
     );
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
   }
 
   function toggleFavorite() {
@@ -281,11 +282,12 @@ export default function ProductPage({
                   +
                 </button>
               </div>
+              {inCartQty > 0 ? <p className="fine-print">{inCartQty} déjà dans ton panier</p> : null}
             </div>
 
             <div className="buy-row">
               <button className="btn-primary" onClick={handleAddToCart} disabled={!canAdd}>
-                {!canAdd ? "Indisponible" : added ? "Ajouté au panier" : "Ajouter au panier"}
+                {!canAdd ? "Indisponible" : inCartQty > 0 ? `Dans le panier (${inCartQty})` : "Ajouter au panier"}
               </button>
               <button
                 className="btn-icon"
