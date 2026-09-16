@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
@@ -61,6 +61,25 @@ export default function ProductPage({
       return p;
     },
   });
+
+  // Next's own scroll-to-top on navigation loses the fight against the
+  // browser's scroll anchoring once the "Chargement du produit." loading
+  // state grows into the real page (only on a first, uncached visit — a
+  // cached revisit renders full-height immediately and never shows the
+  // issue). Forcing it here, once on route entry and again once the real
+  // content has mounted, sidesteps that regardless of which one wins.
+  const scrolledForSlugRef = useRef<string | null>(null);
+  useEffect(() => {
+    scrolledForSlugRef.current = null;
+    window.scrollTo(0, 0);
+  }, [productSlug]);
+
+  useEffect(() => {
+    if (product && scrolledForSlugRef.current !== productSlug) {
+      window.scrollTo(0, 0);
+      scrolledForSlugRef.current = productSlug;
+    }
+  }, [product, productSlug]);
 
   useEffect(() => {
     if (!product?.variants.length) return;
