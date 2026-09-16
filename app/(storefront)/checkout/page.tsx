@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { OrderConfirmationModal } from "@/components/OrderConfirmationModal";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
 import { useCart, lineKey } from "@/components/CartContext";
 import { useCustomerAuth } from "@/components/CustomerAuthContext";
@@ -43,6 +44,8 @@ export default function CheckoutPage() {
 
   const [orderId, setOrderId] = useState<string | null>(null);
   const [paymentInit, setPaymentInit] = useState<PaymentInit | null>(null);
+  const [confirmMode, setConfirmMode] = useState<"en_ligne" | "livraison" | null>(null);
+  const [justAuthenticated, setJustAuthenticated] = useState(false);
 
   const livraison = lines.length ? LIVRAISON : 0;
   const remise = promoApplied?.remise ?? 0;
@@ -65,7 +68,12 @@ export default function CheckoutPage() {
 
   function handlePaid() {
     clear();
-    router.push("/compte");
+    setConfirmMode("en_ligne");
+  }
+
+  function closeConfirmation() {
+    setConfirmMode(null);
+    router.push(isAuthenticated || justAuthenticated ? "/compte" : "/");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -114,11 +122,12 @@ export default function CheckoutPage() {
 
       if (order.token) {
         setCustomerSession({ token: order.token, customer: { ...order.customer, adresse: adresse || null } });
+        setJustAuthenticated(true);
       }
 
       if (mode === "livraison") {
         clear();
-        router.push("/");
+        setConfirmMode("livraison");
         return;
       }
 
@@ -320,6 +329,8 @@ export default function CheckoutPage() {
           </div>
         </div>
       </footer>
+
+      <OrderConfirmationModal mode={confirmMode} onClose={closeConfirmation} />
     </>
   );
 }
