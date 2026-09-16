@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { ProductGridSkeleton } from "@/components/ProductGridSkeleton";
+import { QuickAddButton } from "@/components/QuickAddButton";
 import { getBrand, getProducts, formatPrice } from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 
@@ -57,6 +58,7 @@ export function BrandCollection({ brandSlug, brandNom }: { brandSlug: string; br
                   />
                 ) : null}
                 <div className="corner" />
+                <QuickAddButton product={product} />
               </div>
               <div className="card-brand">{brandNom}</div>
               <div className="card-name">{product.nom}</div>

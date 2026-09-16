@@ -85,6 +85,17 @@
 .rihan-theme .card-brand{font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--rh-gold); margin-top:18px; font-weight:700; font-family:'Inter',sans-serif;}
 .rihan-theme .card-name{font-size:18px; margin-top:6px; font-weight:600; font-family:'Cormorant Garamond', serif;}
 .rihan-theme .card-price{font-size:13.5px; margin-top:6px; color:#6a6a5c; font-family:'Inter',sans-serif;}
+.rihan-theme .quick-add-btn{
+  position:absolute; right:10px; top:10px; z-index:2;
+  width:36px; height:36px; border-radius:50%; border:none;
+  background:var(--rh-green); color:var(--rh-ivory);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:transform .15s ease, background .15s ease;
+}
+.rihan-theme .quick-add-btn svg{width:17px; height:17px;}
+.rihan-theme .quick-add-btn:hover{transform:scale(1.08);}
+.rihan-theme .quick-add-btn:disabled{opacity:0.4; cursor:not-allowed;}
+.rihan-theme .quick-add-btn.done{background:#1E8E4F;}
 
 @keyframes skel-pulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
 .rihan-theme .skel-img{aspect-ratio:3/4; border-radius:4px; background:var(--rh-cream); animation:skel-pulse 1.4s ease-in-out infinite;}

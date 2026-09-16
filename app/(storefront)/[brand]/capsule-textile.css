@@ -95,6 +95,17 @@
 .capsule-theme .card-brand{font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--rouge); margin-top:16px; font-weight:700;}
 .capsule-theme .card-name{font-size:15.5px; margin-top:5px; font-weight:600; font-family:'Bricolage Grotesque', sans-serif;}
 .capsule-theme .card-price{font-size:14px; margin-top:6px; font-weight:600;}
+.capsule-theme .quick-add-btn{
+  position:absolute; right:10px; top:10px; z-index:2;
+  width:36px; height:36px; border-radius:50%; border:none;
+  background:var(--noir); color:var(--blanc);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:transform .15s ease, background .15s ease;
+}
+.capsule-theme .quick-add-btn svg{width:17px; height:17px;}
+.capsule-theme .quick-add-btn:hover{transform:scale(1.08);}
+.capsule-theme .quick-add-btn:disabled{opacity:0.4; cursor:not-allowed;}
+.capsule-theme .quick-add-btn.done{background:#1E8E4F;}
 
 @keyframes skel-pulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
 .capsule-theme .skel-img{aspect-ratio:3/4; border-radius:10px; background:#EAE6DA; animation:skel-pulse 1.4s ease-in-out infinite;}
