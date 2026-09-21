@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
 import { lineKey, useCart } from "@/components/CartContext";
 import { useCustomerAuth } from "@/components/CustomerAuthContext";
+import { cldUrl } from "@/lib/cloudinary";
 import {
   addFavorite,
   formatPrice,
@@ -232,7 +233,7 @@ export default function ProductPage({
           <div className="gallery">
             <div className="gallery-main">
               {thumbs[activeThumb] ? (
-                <img src={thumbs[activeThumb]} alt={product.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={cldUrl(thumbs[activeThumb], 1100)} alt={product.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
               ) : null}
               <div className="corner" />
             </div>
@@ -245,7 +246,7 @@ export default function ProductPage({
                     onClick={() => setActiveThumb(i)}
                     style={{ position: "relative" }}
                   >
-                    <img src={src} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                    <img src={cldUrl(src, 160)} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
                 ))}
               </div>

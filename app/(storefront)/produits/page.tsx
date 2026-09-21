@@ -9,6 +9,7 @@ import { QuickAddButton } from "@/components/QuickAddButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
+import { cldUrl } from "@/lib/cloudinary";
 import { formatPrice, getBrands, getProducts, type ProductFilters } from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 import "../storefront.css";
@@ -120,7 +121,7 @@ function ProduitsPageInner() {
                 <Link className="card" href={`/${product.brand.slug}/${product.slug}`} key={product.slug}>
                   <div className="card-img">
                     {product.images[0] ? (
-                      <img src={product.images[0]} alt={product.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                      <img src={cldUrl(product.images[0], 500)} alt={product.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : null}
                     <div className="corner" />
                     <QuickAddButton product={product} />

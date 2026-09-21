@@ -10,6 +10,7 @@ import { StorefrontFonts } from "@/components/StorefrontFonts";
 import { useCustomerAuth } from "@/components/CustomerAuthContext";
 import { apiFetch } from "@/lib/api";
 import { formatPrice } from "@/lib/catalog";
+import { cldUrl } from "@/lib/cloudinary";
 import { getFavorites } from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 import "../storefront.css";
@@ -122,7 +123,7 @@ export default function ComptePage() {
                 <Link className="card" href={`/${favorite.product.brand.slug}/${favorite.product.slug}`} key={favorite.id}>
                   <div className="card-img">
                     {favorite.product.images[0] ? (
-                      <img src={favorite.product.images[0]} alt={favorite.product.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                      <img src={cldUrl(favorite.product.images[0], 500)} alt={favorite.product.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : null}
                     <div className="corner" />
                   </div>

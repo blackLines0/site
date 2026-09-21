@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
 import { useCart, lineKey } from "@/components/CartContext";
+import { cldUrl } from "@/lib/cloudinary";
 import { formatPrice } from "@/lib/shop";
 import "../storefront.css";
 
@@ -40,7 +41,7 @@ export default function PanierPage() {
                     <div className="cart-item" key={key}>
                       <div className="item-img">
                         {line.image ? (
-                          <img src={line.image} alt={line.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img src={cldUrl(line.image, 200)} alt={line.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                         ) : null}
                       </div>
                       <div className="item-mid">

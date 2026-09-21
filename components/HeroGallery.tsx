@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
+import { cldUrl } from "@/lib/cloudinary";
 import { getHeroSlides } from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 
@@ -57,7 +58,7 @@ export function HeroGallery() {
         <AnimatePresence>
           <motion.img
             key={active}
-            src={slides[active].image}
+            src={cldUrl(slides[active].image, 900)}
             alt="Blacklines, collection en vitrine"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -76,7 +77,7 @@ export function HeroGallery() {
               className={`hero-gallery-thumb${i === active ? " active" : ""}`}
               onMouseEnter={() => setActive(i)}
             >
-              <img src={slide.image} alt="" />
+              <img src={cldUrl(slide.image, 150)} alt="" />
             </div>
           ))}
         </div>

@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { ProductGridSkeleton } from "@/components/ProductGridSkeleton";
 import { QuickAddButton } from "@/components/QuickAddButton";
+import { cldUrl } from "@/lib/cloudinary";
 import { getBrand, getProducts, formatPrice } from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 
@@ -52,7 +53,7 @@ export function BrandCollection({ brandSlug, brandNom }: { brandSlug: string; br
               <div className="card-img">
                 {product.images[0] ? (
                   <img
-                    src={product.images[0]}
+                    src={cldUrl(product.images[0], 500)}
                     alt={product.nom}
                     style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
                   />

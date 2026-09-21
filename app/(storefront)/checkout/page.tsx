@@ -7,6 +7,7 @@ import { OrderConfirmationModal } from "@/components/OrderConfirmationModal";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
 import { useCart, lineKey } from "@/components/CartContext";
 import { useCustomerAuth } from "@/components/CustomerAuthContext";
+import { cldUrl } from "@/lib/cloudinary";
 import { MobileMoneyPayment } from "@/components/MobileMoneyPayment";
 import { CardPayment } from "@/components/CardPayment";
 import { apiFetch, setCustomerSession } from "@/lib/api";
@@ -279,7 +280,7 @@ export default function CheckoutPage() {
                 ) : (
                   lines.map((line) => (
                     <div className="summary-item" key={lineKey(line)}>
-                      <div className="thumb">{line.image ? <img src={line.image} alt={line.nom} /> : null}</div>
+                      <div className="thumb">{line.image ? <img src={cldUrl(line.image, 200)} alt={line.nom} /> : null}</div>
                       <div>
                         <div className="name">{line.nom}</div>
                         <div className="meta">{line.brandNom} · {line.variantLabel ?? "Format standard"} · Qté {line.qty}</div>
