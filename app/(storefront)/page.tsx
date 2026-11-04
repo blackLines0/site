@@ -39,17 +39,17 @@ export default function HomePage() {
           <div>
             <div className="eyebrow">Blacklines · Boutique officielle</div>
             <h1 className="display">
-              Trois marques.
+              Cinq marques.
               <br />
               <em>Une seule ligne.</em>
             </h1>
             <p className="lede">
-              Capsule Textile, Spicysoul et Rihan Wa Harir réunies dans une boutique
-              unique : le savoir-faire togolais, assemblé comme sur un métier à tisser.
+              Capsule Textile, Spicysoul, Rihan Wa Harir, Artmoi&apos;R et Spicy Kids réunies
+              dans une boutique unique : le savoir-faire togolais, assemblé comme sur un métier à tisser.
             </p>
             <div className="hero-ctas">
               <a href="#nouveautes" className="btn-primary">Découvrir la collection</a>
-              <a href="#pillars" className="btn-ghost">Voir les trois marques</a>
+              <a href="#pillars" className="btn-ghost">Voir les cinq marques</a>
             </div>
           </div>
           <HeroGallery />
@@ -68,7 +68,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="section-head">
             <div>
-              <div className="eyebrow">Trois marques, une maison</div>
+              <div className="eyebrow">Cinq marques, une maison</div>
               <h2 className="display">Ce que porte la boutique</h2>
             </div>
           </div>

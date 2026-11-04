@@ -1,9 +1,9 @@
 import Link from "next/link";
-import type { BrandSlug } from "@/lib/catalog";
+import { BRANDS, type BrandSlug } from "@/lib/catalog";
 
 // Only Instagram is live per brand for now — the other networks stay as
 // visual placeholders (href="#") until those accounts exist.
-const INSTAGRAM_URLS: Record<BrandSlug, string> = {
+const INSTAGRAM_URLS: Partial<Record<BrandSlug, string>> = {
   "capsule-textile": "https://www.instagram.com/capsuletextile/",
   spicysoul: "https://www.instagram.com/spicysouul/",
   "rihan-wa-harir": "https://www.instagram.com/rihanwaharir/",
@@ -13,7 +13,7 @@ function socialLinks(brand?: BrandSlug) {
   return [
   {
     name: "Instagram",
-    href: brand ? INSTAGRAM_URLS[brand] : "#",
+    href: (brand && INSTAGRAM_URLS[brand]) ?? "#",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <rect x="3" y="3" width="18" height="18" rx="5" />
@@ -79,9 +79,9 @@ export function SiteFooter({ brand }: { brand?: BrandSlug } = {}) {
           <div className="footer-col">
             <h4>Boutique</h4>
             <Link href="/produits">Tous les produits</Link>
-            <Link href="/capsule-textile">Capsule Textile</Link>
-            <Link href="/spicysoul">Spicysoul</Link>
-            <Link href="/rihan-wa-harir">Rihan Wa Harir</Link>
+            {BRANDS.map((b) => (
+              <Link key={b.slug} href={`/${b.slug}`}>{b.nom}</Link>
+            ))}
           </div>
           <div className="footer-col">
             <h4>Aide</h4>

@@ -70,7 +70,6 @@ export function SpicysoulContent() {
           <p className="lede">{description ?? FALLBACK_DESCRIPTION}</p>
           <div className="hero-ctas">
             <a href="#collection" className="btn-primary">Explorer le catalogue</a>
-            <a href="#lookbook" className="btn-ghost">Le lookbook</a>
           </div>
         </div>
       </section>
@@ -83,31 +82,7 @@ export function SpicysoulContent() {
         </div>
       </div>
 
-      <section className="section" id="lookbook">
-        <div className="wrap">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">L&apos;ambiance</div>
-              <h2 className="display">Merci pour la commande</h2>
-            </div>
-          </div>
-          <div className="quote-block">
-            <p>
-              La beauté de nos tissus se trouve dans les détails visuels, avec des
-              couleurs exceptionnelles pour un style unique et authentique.
-            </p>
-            <div className="tag">SP!CY SOUL</div>
-          </div>
-          <div className="mood-grid" style={{ marginTop: 14 }} aria-hidden="true">
-            <div className="mood-card mc1"><img src="/images/IMG_4307.PNG" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /><span className="label">Rue</span></div>
-            <div className="mood-card mc2"><img src="/images/IMG_4308.PNG" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /><span className="label">Studio</span></div>
-            <div className="mood-card mc3"><img src="/images/IMG_4311.PNG" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /><span className="label">Nuit</span></div>
-            <div className="mood-card mc4"><img src="/images/IMG_4310.PNG" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /><span className="label">Lumière</span></div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section" id="collection" style={{ paddingTop: 0 }}>
+      <section className="section" id="collection">
         <div className="wrap">
           <div className="section-head">
             <div>

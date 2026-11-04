@@ -7,6 +7,7 @@ import { notFound, useRouter } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
+import { ProductImageZoom } from "@/components/ProductImageZoom";
 import { lineKey, useCart } from "@/components/CartContext";
 import { useCustomerAuth } from "@/components/CustomerAuthContext";
 import { cldUrl } from "@/lib/cloudinary";
@@ -30,6 +31,32 @@ function Stars({ note, size = "review" }: { note: number; size?: "review" | "avg
       {"★".repeat(full)}
       {"☆".repeat(5 - full)}
     </span>
+  );
+}
+
+function ProductSkeleton() {
+  return (
+    <section className="product" aria-busy="true" aria-label="Chargement du produit">
+      <div className="wrap product-grid">
+        <div className="gallery">
+          <div className="gallery-main gallery-placeholder skel-block" />
+          <div className="gallery-thumbs">
+            {[0, 1, 2, 3].map((i) => (
+              <div className="thumb skel-block" key={i} />
+            ))}
+          </div>
+        </div>
+        <div className="product-info">
+          <div className="skel-line sm" />
+          <div className="skel-line skel-title" />
+          <div className="skel-line skel-price" />
+          <div className="skel-line skel-desc" />
+          <div className="skel-line skel-desc" />
+          <div className="skel-line md" />
+          <div className="skel-line skel-button" />
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -64,8 +91,8 @@ export default function ProductPage({
   });
 
   // Next's own scroll-to-top on navigation loses the fight against the
-  // browser's scroll anchoring once the "Chargement du produit." loading
-  // state grows into the real page (only on a first, uncached visit — a
+  // browser's scroll anchoring once the loading skeleton
+  // grows into the real page (only on a first, uncached visit — a
   // cached revisit renders full-height immediately and never shows the
   // issue). Forcing it here, once on route entry and again once the real
   // content has mounted, sidesteps that regardless of which one wins.
@@ -147,10 +174,8 @@ export default function ProductPage({
     return (
       <>
         <StorefrontFonts />
-        <SiteHeader />
-        <section className="product">
-          <div className="wrap"><p style={{ padding: "60px 0", color: "var(--gris)" }}>Chargement du produit.</p></div>
-        </section>
+        <SiteHeader active={brandSlug as BrandSlug} />
+        <ProductSkeleton />
         <SiteFooter />
       </>
     );
@@ -231,12 +256,11 @@ export default function ProductPage({
       <section className="product">
         <div className="wrap product-grid">
           <div className="gallery">
-            <div className="gallery-main">
-              {thumbs[activeThumb] ? (
-                <img src={cldUrl(thumbs[activeThumb], 1100)} alt={product.nom} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-              ) : null}
-              <div className="corner" />
-            </div>
+            {thumbs[activeThumb] ? (
+              <ProductImageZoom key={thumbs[activeThumb]} src={thumbs[activeThumb]} alt={product.nom} />
+            ) : (
+              <div className="gallery-main gallery-placeholder"><div className="corner" /></div>
+            )}
             {thumbs.length > 1 ? (
               <div className="gallery-thumbs">
                 {thumbs.map((src, i) => (
@@ -244,9 +268,8 @@ export default function ProductPage({
                     key={src}
                     className={`thumb${activeThumb === i ? " active" : ""}`}
                     onClick={() => setActiveThumb(i)}
-                    style={{ position: "relative" }}
                   >
-                    <img src={cldUrl(src, 160)} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                    <img src={cldUrl(src, 160)} alt="" />
                   </div>
                 ))}
               </div>

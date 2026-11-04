@@ -216,17 +216,19 @@ nav.main-nav a{font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase
 
 .pillars{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(6, 1fr);
   gap:1px;
   background:var(--gris-ligne);
   border:1px solid var(--gris-ligne);
 }
 .pillar{
+  grid-column:span 2;
   background:var(--blanc);
   padding:40px 32px 44px;
   position:relative;
   transition:background .3s ease;
 }
+.pillar:nth-last-child(-n+2){grid-column:span 3;}
 .pillar:hover{background:var(--gris-clair);}
 .pillar .num{
   font-family:'Fraunces', serif; font-style:italic; font-size:14px; color:var(--gris);
@@ -291,6 +293,12 @@ nav.main-nav a{font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase
 .skel-line.sm{width:40%; margin-top:16px;}
 .skel-line.md{width:75%;}
 .skel-line.lg{width:50%; margin-top:8px;}
+.skel-block{background:var(--gris-clair); animation:skel-pulse 1.4s ease-in-out infinite; cursor:default;}
+.skel-line.skel-title{width:80%; height:34px; margin-top:16px;}
+.skel-line.skel-price{width:35%; height:22px; margin-top:20px;}
+.skel-line.skel-desc{margin-top:28px;}
+.skel-line.skel-desc + .skel-line{margin-top:12px;}
+.skel-line.skel-button{height:52px; margin-top:40px;}
 
 /* ---------- STORY / MAKER STRIP ---------- */
 .story{
@@ -351,13 +359,27 @@ footer{padding:70px 0 40px;}
 }
 
 /* ---------- PRODUCT DETAIL ---------- */
+@media (hover:none){.zoom-pane,.zoom-lens{display:none;}}
 .product{padding:56px 0 100px;}
 .product-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:70px;}
-.gallery-main{aspect-ratio:4/5; position:relative; overflow:hidden; background:linear-gradient(155deg,#141414,#3a3a38 60%,#5c5c58);}
+.gallery-stage{position:relative;}
+/* The frame shrinks to the photo, so no letterbox shows around it. */
+.gallery-main{width:fit-content; max-width:100%; margin:0 auto; position:relative; overflow:hidden;}
+.gallery-main img{display:block; width:auto; height:auto; max-width:100%; max-height:max(360px, 100vh - 210px);}
+.gallery-main.gallery-placeholder{aspect-ratio:4/5; width:100%; max-height:max(360px, 100vh - 210px); background:var(--gris-clair);}
+.gallery-main.gallery-placeholder img{position:absolute; opacity:0;}
+.zoom-lens{position:absolute; z-index:1; pointer-events:none; background:rgba(255,255,255,0.35); border:1px solid rgba(0,0,0,0.35);}
+/* Fills the info column: 0.9fr next to the gallery's 1.1fr, past the 70px gap. */
+.zoom-pane{
+  position:absolute; top:0; left:calc(100% + 70px); z-index:20; visibility:hidden;
+  width:calc(100% * 9 / 11); aspect-ratio:4/5; max-height:max(360px, 100vh - 210px);
+  background-color:var(--blanc); background-repeat:no-repeat; border:1px solid var(--gris-clair); box-shadow:0 12px 32px rgba(0,0,0,0.14);
+}
 .gallery-main .corner{position:absolute; right:0; bottom:0; width:44px; height:44px; background:var(--blanc); clip-path:polygon(100% 0,100% 100%,calc(100% - 44px) 100%);}
 .gallery-thumbs{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px;}
-.thumb{aspect-ratio:1; cursor:pointer; border:1px solid transparent; transition:border-color .2s ease;}
-.thumb.active{border-color:var(--noir);}
+.gallery-thumbs .thumb{aspect-ratio:1; position:relative; cursor:pointer; border:1px solid transparent; transition:border-color .2s ease;}
+.gallery-thumbs .thumb img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+.gallery-thumbs .thumb.active{border-color:var(--noir);}
 .t1{background:linear-gradient(155deg,#141414,#3a3a38);}
 .t2{background:repeating-linear-gradient(90deg,#141414 0 6px,#3a3a38 6px 12px);}
 .t3{background:repeating-linear-gradient(45deg,#8a8a86 0 7px,#141414 7px 10px);}
@@ -565,12 +587,14 @@ footer{padding:70px 0 40px;}
   .hero-gallery{height:300px; margin-top:20px;}
   .hero-gallery-strip{height:60px;}
   .pillars{grid-template-columns:1fr;}
+  .pillar,.pillar:nth-last-child(-n+2){grid-column:auto;}
   .products{grid-template-columns:repeat(2,1fr);}
   .story-inner{grid-template-columns:1fr;}
   .footer-top{grid-template-columns:1fr 1fr; gap:32px;}
   .trust .wrap{grid-template-columns:1fr;}
   .trust-item{border-right:none; border-bottom:1px solid var(--gris-ligne);}
   .product-grid{grid-template-columns:1fr; gap:36px;}
+  .zoom-pane,.zoom-lens{display:none;}
   .cart-grid{grid-template-columns:1fr; gap:36px;}
   .summary{position:static;}
   .cart-item{grid-template-columns:80px 1fr; row-gap:14px;}

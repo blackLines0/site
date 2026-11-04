@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Blacklines",
-  description: "Boutique Blacklines : Capsule Textile, Spicysoul, Rihan Wa Harir",
+  description: "Boutique Blacklines : Capsule Textile, Spicysoul, Rihan Wa Harir, Artmoi'R, Spicy Kids",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

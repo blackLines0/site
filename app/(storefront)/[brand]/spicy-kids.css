@@ -1,0 +1,154 @@
+.spicykids-theme{
+  --sk-lilac:#A472BA; --sk-navy:#043186; --sk-black:#000000; --sk-white:#FFFFFF;
+  --sk-lilac-deep:#7A4B91; --sk-lilac-soft:#E9DCEF; --sk-mist:#F2F3F5;
+  --sk-display:'Fredoka','Nunito',sans-serif; --sk-body:'Nunito',sans-serif;
+  --bl-gris:#6E6577; --bl-ligne:#E9DCEF;
+  background:var(--sk-white); color:var(--sk-navy); font-family:var(--sk-body); -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+.spicykids-theme *{box-sizing:border-box;}
+.spicykids-theme h1,.spicykids-theme h2,.spicykids-theme h3,.spicykids-theme .display{font-family:var(--sk-display); font-weight:600; letter-spacing:-0.005em; line-height:1.12;}
+.spicykids-theme a{color:inherit; text-decoration:none;}
+.spicykids-theme .eyebrow{display:block; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; font-weight:800; color:var(--sk-lilac-deep);}
+.spicykids-theme .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+.spicykids-theme button{font-family:var(--sk-body); cursor:pointer; border:none;}
+
+.spicykids-theme .cut-link{position:relative; display:inline-block; padding-bottom:4px;}
+.spicykids-theme .cut-link::after{content:""; position:absolute; left:0; bottom:0; width:100%; height:3px; border-radius:3px; background:var(--sk-lilac);
+  transform-origin:left bottom; transform:scaleX(0); transition:transform .3s ease;}
+.spicykids-theme .cut-link:hover::after{transform:scaleX(1);}
+.spicykids-theme .cut-link.active{color:var(--sk-lilac-deep);}
+.spicykids-theme .cut-link.active::after{transform:scaleX(1);}
+
+.spicykids-theme header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,0.94); backdrop-filter:blur(8px); border-bottom:1px solid var(--bl-ligne);}
+.spicykids-theme .header-inner{display:flex; align-items:center; justify-content:space-between; height:76px;}
+.spicykids-theme .logo-group{display:flex; align-items:center; gap:12px;}
+.spicykids-theme .logo-mark{height:26px; width:auto;}
+.spicykids-theme .wordmark{font-family:var(--sk-display); font-weight:600; font-size:20px; color:var(--sk-black);}
+.spicykids-theme nav.main-nav{display:flex; gap:34px;}
+.spicykids-theme nav.main-nav a{font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase; font-weight:800; color:var(--sk-navy);}
+.spicykids-theme nav.main-nav .brand-menu-trigger{font-family:var(--sk-body); font-weight:800;}
+.spicykids-theme .header-actions{display:flex; align-items:center; gap:22px;}
+.spicykids-theme .icon-btn{background:none; padding:0; width:31px; height:31px; display:flex; align-items:center; justify-content:center; color:var(--sk-navy); flex-shrink:0; position:relative;}
+.spicykids-theme .icon-btn svg{width:19px; height:19px; flex-shrink:0;}
+.spicykids-theme .cart-count{position:absolute; top:-2px; right:-4px; background:var(--sk-navy); color:var(--sk-white); font-size:9px; font-weight:800; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
+.spicykids-theme .account-link{display:flex; align-items:center; gap:7px; color:var(--sk-navy); flex-shrink:0;}
+.spicykids-theme .account-link svg{width:19px; height:19px; flex-shrink:0;}
+.spicykids-theme .account-name{font-size:13px; font-weight:800; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.spicykids-theme .menu-toggle{display:none; background:none; padding:0; width:31px; height:31px; align-items:center; justify-content:center; color:var(--sk-navy); flex-shrink:0; margin-right:14px;}
+.spicykids-theme .menu-toggle svg{width:22px; height:22px;}
+.spicykids-theme .mobile-nav{display:none; flex-direction:column; border-top:1px solid var(--bl-ligne); padding:8px 32px 16px;}
+.spicykids-theme .mobile-nav a{padding:12px 0; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; font-weight:800; border-bottom:1px solid var(--bl-ligne);}
+.spicykids-theme .mobile-nav a:last-child{border-bottom:none;}
+
+.spicykids-theme .breadcrumb{padding:20px 0; font-size:12.5px; color:var(--bl-gris); border-bottom:1px solid var(--bl-ligne);}
+.spicykids-theme .breadcrumb a{color:var(--bl-gris);}
+.spicykids-theme .breadcrumb span.sep{margin:0 8px; color:var(--sk-lilac);}
+.spicykids-theme .breadcrumb strong{color:var(--sk-navy); font-weight:800;}
+
+.spicykids-theme .brand-hero{background:var(--sk-mist); padding:48px 0 120px; position:relative; overflow:hidden; text-align:center;}
+.spicykids-theme .brand-hero-inner{position:relative; z-index:2;}
+.spicykids-theme .brand-logo{width:min(400px,78vw); height:auto; margin:0 auto;}
+.spicykids-theme .brand-hero .eyebrow{margin-top:28px;}
+.spicykids-theme .brand-hero h1{font-size:clamp(34px,5vw,56px); margin-top:14px; color:var(--sk-navy);}
+.spicykids-theme .brand-hero p.lede{margin:20px auto 0; font-size:18px; line-height:1.6; color:#3B3A55; max-width:46ch; font-weight:600;}
+.spicykids-theme .hero-ctas{margin-top:32px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+.spicykids-theme .btn-primary{
+  display:inline-block; background:var(--sk-navy); color:var(--sk-white); padding:15px 30px; border-radius:999px;
+  font-size:15px; font-weight:800; transition:transform .2s ease, background .2s ease;
+}
+.spicykids-theme .btn-primary:hover{transform:translateY(-2px); background:#01246A;}
+.spicykids-theme .btn-ghost{display:inline-block; padding:13px 28px; border-radius:999px; font-size:15px; font-weight:800; border:2px solid var(--sk-navy); color:var(--sk-navy); background:transparent; transition:background .2s ease, color .2s ease;}
+.spicykids-theme .btn-ghost:hover{background:var(--sk-navy); color:var(--sk-white);}
+
+.spicykids-theme .bubbles{position:absolute; inset:0; pointer-events:none;}
+.spicykids-theme .bubble{position:absolute; display:block; border-radius:50%;}
+/* The crescent echoes the gloss on the logo's letters. */
+.spicykids-theme .bubble::after{content:""; position:absolute; inset:11%; border-radius:50%; border:0 solid transparent; border-top:max(3px,5cqw) solid var(--sk-white); transform:rotate(-40deg);}
+.spicykids-theme .bubble{container-type:inline-size;}
+.spicykids-theme .b1{width:190px; height:190px; top:-46px; left:-52px; background:var(--sk-lilac);}
+.spicykids-theme .b2{width:84px; height:84px; top:46%; left:7%; background:var(--sk-navy);}
+.spicykids-theme .b3{width:250px; height:250px; bottom:-84px; right:-76px; background:var(--sk-lilac);}
+.spicykids-theme .b4{width:60px; height:60px; top:15%; right:11%; background:var(--sk-navy);}
+.spicykids-theme .hero-wave{position:absolute; left:0; right:0; bottom:-1px; width:100%; height:64px; z-index:1; display:block;}
+.spicykids-theme .hero-wave path{fill:var(--sk-white);}
+
+.spicykids-theme .strip .wrap{display:flex; justify-content:center; gap:14px 44px; padding:6px 32px 18px; font-size:14px; color:var(--sk-lilac-deep); font-weight:800; flex-wrap:wrap;}
+
+.spicykids-theme .section{padding:84px 0;}
+.spicykids-theme .section-head{text-align:center; margin-bottom:46px;}
+.spicykids-theme .section-head h2{font-size:clamp(28px,3.8vw,42px); margin-top:12px;}
+
+.spicykids-theme .value-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+.spicykids-theme .value{padding:34px 30px 36px; border-radius:28px;}
+.spicykids-theme .value.v1{background:var(--sk-mist);}
+.spicykids-theme .value.v2{background:var(--sk-navy); color:var(--sk-white);}
+.spicykids-theme .value.v3{background:var(--sk-lilac-soft);}
+.spicykids-theme .value-num{font-family:var(--sk-display); font-weight:600; font-size:15px; opacity:0.7;}
+.spicykids-theme .value h3{font-size:26px; margin-top:12px;}
+.spicykids-theme .value p{font-size:16.5px; line-height:1.55; margin-top:10px; font-weight:600;}
+
+.spicykids-theme .collection{background:var(--sk-mist); border-radius:48px 48px 0 0;}
+.spicykids-theme .filters{display:flex; gap:10px; margin-bottom:40px; justify-content:center; flex-wrap:wrap;}
+.spicykids-theme .chip{padding:9px 20px; border-radius:999px; font-size:14px; font-weight:800; border:2px solid var(--sk-lilac-soft); background:var(--sk-white); color:var(--sk-navy);}
+.spicykids-theme .chip.active{background:var(--sk-navy); color:var(--sk-white); border-color:var(--sk-navy);}
+.spicykids-theme .products{display:grid; grid-template-columns:repeat(4,1fr); gap:28px;}
+.spicykids-theme .products > p{grid-column:1 / -1; text-align:center; color:var(--bl-gris) !important; font-weight:600;}
+.spicykids-theme .card-img{aspect-ratio:3/4; position:relative; overflow:hidden; border-radius:22px; background:var(--sk-lilac-soft);}
+.spicykids-theme .card-brand{font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--sk-lilac-deep); margin-top:14px; font-weight:800;}
+.spicykids-theme .card-name{font-size:16px; margin-top:4px; font-weight:700;}
+.spicykids-theme .card-price{font-size:15px; margin-top:4px; font-weight:800;}
+.spicykids-theme .quick-add-btn{
+  position:absolute; right:10px; top:10px; z-index:2;
+  width:38px; height:38px; border-radius:50%; border:none;
+  background:var(--sk-navy); color:var(--sk-white);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:transform .15s ease, background .15s ease;
+}
+.spicykids-theme .quick-add-btn svg{width:17px; height:17px;}
+.spicykids-theme .quick-add-btn:hover{transform:scale(1.08);}
+.spicykids-theme .quick-add-btn:disabled{opacity:0.4; cursor:not-allowed;}
+.spicykids-theme .quick-add-btn.done{background:#1E8E4F;}
+
+@keyframes skel-pulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
+.spicykids-theme .skel-img{aspect-ratio:3/4; border-radius:22px; background:var(--sk-lilac-soft); animation:skel-pulse 1.4s ease-in-out infinite;}
+.spicykids-theme .skel-line{height:11px; background:var(--sk-lilac-soft); border-radius:3px; margin-top:14px; animation:skel-pulse 1.4s ease-in-out infinite;}
+.spicykids-theme .skel-line.sm{width:40%; margin-top:16px;}
+.spicykids-theme .skel-line.md{width:75%;}
+.spicykids-theme .skel-line.lg{width:50%; margin-top:8px;}
+
+.spicykids-theme footer{padding:70px 0 40px; background:var(--sk-mist);}
+.spicykids-theme .footer-top{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:56px; border-bottom:1px solid var(--sk-lilac-soft);}
+.spicykids-theme .footer-brand p{font-size:14px; color:var(--bl-gris); margin-top:16px; line-height:1.6; max-width:32ch; font-weight:600;}
+.spicykids-theme .footer-social{display:flex; gap:10px; margin-top:22px;}
+.spicykids-theme .footer-social-icon{
+  width:36px; height:36px; border:2px solid var(--sk-lilac-soft); border-radius:50%; background:var(--sk-white);
+  display:flex; align-items:center; justify-content:center; color:var(--sk-navy);
+  transition:background .2s ease, color .2s ease;
+}
+.spicykids-theme .footer-social-icon svg{width:16px; height:16px;}
+.spicykids-theme .footer-social-icon:hover{background:var(--sk-navy); color:var(--sk-white); border-color:var(--sk-navy);}
+.spicykids-theme .footer-col h4{font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--bl-gris); margin-bottom:16px; font-weight:800;}
+.spicykids-theme .footer-col a{display:block; font-size:14.5px; margin-bottom:11px; font-weight:600;}
+.spicykids-theme .footer-bottom{display:flex; justify-content:space-between; padding-top:28px; font-size:12.5px; color:var(--bl-gris); flex-wrap:wrap; gap:10px;}
+
+@media (max-width:920px){
+  .spicykids-theme nav.main-nav{display:none;}
+  .spicykids-theme .menu-toggle{display:flex;}
+  .spicykids-theme .mobile-nav{display:flex;}
+  .spicykids-theme .b1{width:110px; height:110px; top:-58px; left:-52px;}
+  .spicykids-theme .b3{width:130px; height:130px; bottom:-70px; right:-62px;}
+  .spicykids-theme .b2,.spicykids-theme .b4{display:none;}
+  .spicykids-theme .value-grid{grid-template-columns:1fr;}
+  .spicykids-theme .products{grid-template-columns:repeat(2,1fr);}
+  .spicykids-theme .footer-top{grid-template-columns:1fr 1fr; gap:32px;}
+}
+@media (max-width:480px){
+  .spicykids-theme .wrap{padding:0 18px;}
+  .spicykids-theme .header-inner{height:64px;}
+  .spicykids-theme .wordmark{display:none;}
+  .spicykids-theme .account-name{display:none;}
+  .spicykids-theme .brand-hero{padding:48px 0 96px;}
+  .spicykids-theme .section{padding:60px 0;}
+  .spicykids-theme .collection{border-radius:32px 32px 0 0;}
+  .spicykids-theme .products{gap:18px 14px;}
+}

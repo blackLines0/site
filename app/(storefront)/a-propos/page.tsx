@@ -6,7 +6,7 @@ import "../storefront.css";
 
 export const metadata = {
   title: "À propos · Blacklines",
-  description: "L'histoire et la mission de Blacklines, maison togolaise derrière Capsule Textile, Spicysoul et Rihan Wa Harir.",
+  description: "L'histoire et la mission de Blacklines, maison togolaise derrière Capsule Textile, Spicysoul, Rihan Wa Harir, Artmoi'R et Spicy Kids.",
 };
 
 export default function AProposPage() {
@@ -30,8 +30,8 @@ export default function AProposPage() {
 
           <p>
             Blacklines est une maison togolaise fondée à Lomé en 2019. Elle porte
-            aujourd&apos;hui trois marques, Capsule Textile, Spicysoul et Rihan Wa Harir,
-            tout en accompagnant d&apos;autres structures dans leur développement
+            aujourd&apos;hui cinq marques, Capsule Textile, Spicysoul, Rihan Wa Harir,
+            Artmoi&apos;R et Spicy Kids, tout en accompagnant d&apos;autres structures dans leur développement
             stratégique. Cette double vocation se lit jusque dans le tracé du logo :
             cinq traits, brisés au même angle de 18°, celui des bandes tissées
             togolaises.
@@ -45,7 +45,10 @@ export default function AProposPage() {
             l&apos;énergie d&apos;une Afrique en mouvement, couleur, coupe et caractère.{" "}
             <strong>Rihan Wa Harir</strong> réunit bakhour, encens, huiles et perles au
             service de la médecine prophétique et du soin du corps comme de
-            l&apos;esprit.
+            l&apos;esprit. <strong>Artmoi&apos;R</strong> allie l&apos;élégance de la
+            haute fantaisie à la créativité brute de la céramique.{" "}
+            <strong>Spicy Kids</strong> offre aux petits un refuge de douceur, où
+            l&apos;imagination s&apos;épanouit.
           </p>
 
           <h2>Notre engagement</h2>

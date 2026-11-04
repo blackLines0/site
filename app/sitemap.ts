@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
+import { BRAND_SLUGS } from "@/lib/catalog";
 
 const BASE_URL = "https://www.blallery.com";
-
-const BRAND_SLUGS = ["capsule-textile", "spicysoul", "rihan-wa-harir"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [

@@ -50,7 +50,7 @@
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpath d='M60,10 C85,30 85,90 60,110 C35,90 35,30 60,10 Z' fill='none' stroke='%23707D52' stroke-width='1.5'/%3E%3C/svg%3E");
   background-size:120px 120px;
 }
-.rihan-theme .brand-logo{height:96px; width:auto; position:relative; z-index:2;}
+.rihan-theme .brand-logo{height:96px; width:auto; margin:0 auto; position:relative; z-index:2;}
 .rihan-theme .brand-hero .eyebrow{margin-top:26px; position:relative; z-index:2;}
 .rihan-theme .brand-hero h1{font-size:clamp(34px,5vw,52px); margin-top:16px; color:var(--rh-green); position:relative; z-index:2;}
 .rihan-theme .brand-hero p.lede{margin:22px auto 0; font-size:16px; line-height:1.75; color:#4d4d4d; max-width:46ch; font-family:'Inter',sans-serif; position:relative; z-index:2;}
