@@ -1,27 +1,44 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { chargeMobileMoney, getFedapayModes, getPaymentStatus, type FedapayMode } from "@/lib/shop";
+import {
+  detectNetwork,
+  formatDeadline,
+  formatPrice,
+  getPaymentStatus,
+  NETWORK_LABELS,
+  startPayment,
+  type PaymentSession,
+} from "@/lib/shop";
 
-const COUNTRY = "tg";
 const POLL_INTERVAL_MS = 4000;
 const SLOW_AFTER_MS = 45000;
 
-type Step = "form" | "confirming" | "approved" | "failed";
+type Step = "form" | "confirming" | "approved" | "review" | "failed";
+
+const FAILED_COPY: Record<string, string> = {
+  expire: "La demande de paiement a expiré avant d'être validée.",
+  annule: "Le paiement a été annulé sur le téléphone.",
+  echoue: "Le paiement a échoué ou a été refusé.",
+};
 
 export function MobileMoneyPayment({
-  orderId,
-  checkoutToken,
+  session,
+  defaultName,
+  defaultPhone,
   onApproved,
 }: {
-  orderId: string;
-  checkoutToken: string;
+  session: PaymentSession;
+  defaultName: string;
+  defaultPhone: string;
   onApproved: () => void;
 }) {
-  const [modes, setModes] = useState<FedapayMode[]>([]);
-  const [mode, setMode] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [nom, setNom] = useState(defaultName);
+  const [telephone, setTelephone] = useState(defaultPhone);
   const [step, setStep] = useState<Step>("form");
+  // What the API asked the phone for, shown while waiting.
+  const [prompt, setPrompt] = useState<{ label: string; montant: number; uncertain: boolean } | null>(null);
+  const [failure, setFailure] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [isSlow, setIsSlow] = useState(false);
@@ -29,15 +46,8 @@ export function MobileMoneyPayment({
   const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startedAtRef = useRef(0);
 
-  useEffect(() => {
-    getFedapayModes()
-      .then((byCountry) => {
-        const options = byCountry[COUNTRY] ?? [];
-        setModes(options);
-        setMode((prev) => prev || options[0]?.mode || "");
-      })
-      .catch(() => setModes([]));
-  }, []);
+  const detected = detectNetwork(telephone);
+  const quote = detected ? session.reseaux[detected] : null;
 
   useEffect(() => {
     return () => {
@@ -45,16 +55,26 @@ export function MobileMoneyPayment({
     };
   }, []);
 
+  function stopPolling() {
+    if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
+    pollTimerRef.current = null;
+  }
+
   function pollStatus() {
     pollTimerRef.current = setTimeout(async () => {
       try {
-        const res = await getPaymentStatus(orderId, checkoutToken);
-        if (res.status === "reussi") {
+        const res = await getPaymentStatus(session.orderId, session.paymentToken);
+        if (res.commande === "payee") {
           setStep("approved");
           onApproved();
           return;
         }
-        if (res.status === "echoue") {
+        if (res.aVerifier) {
+          setStep("review");
+          return;
+        }
+        if (res.paiement === "echoue" || res.paiement === "expire" || res.paiement === "annule") {
+          setFailure(FAILED_COPY[res.paiement]);
           setStep("failed");
           return;
         }
@@ -70,14 +90,27 @@ export function MobileMoneyPayment({
     e.preventDefault();
     setError(null);
 
-    if (!mode || !phoneNumber) {
-      setError("Choisis un opérateur et renseigne ton numéro.");
+    if (nom.trim().length < 2) {
+      setError("Indique le nom du titulaire du compte mobile money.");
+      return;
+    }
+    if (!detected) {
+      setError("Saisis un numéro Flooz (Moov) ou T-Money (Yas) à 8 chiffres.");
       return;
     }
 
     setSubmitting(true);
     try {
-      await chargeMobileMoney(orderId, { reference: checkoutToken, mode, phoneNumber, country: COUNTRY });
+      const started = await startPayment(session.orderId, {
+        token: session.paymentToken,
+        nom: nom.trim(),
+        telephone,
+      });
+      setPrompt({
+        label: NETWORK_LABELS[started.reseau],
+        montant: started.montant,
+        uncertain: Boolean(started.incertain),
+      });
       setStep("confirming");
       setIsSlow(false);
       startedAtRef.current = Date.now();
@@ -89,29 +122,39 @@ export function MobileMoneyPayment({
     }
   }
 
-  function handleCancel() {
-    if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
+  function backToForm() {
+    stopPolling();
     setStep("form");
     setIsSlow(false);
+    setFailure(null);
   }
 
   if (step === "approved") {
     return <p className="mm-status success">Paiement confirmé.</p>;
   }
 
-  if (step === "confirming") {
+  if (step === "review") {
     return (
-      <div className="mm-confirming">
+      <p className="mm-status">
+        Paiement reçu, mais il doit être vérifié par notre équipe. On te contacte très vite.
+      </p>
+    );
+  }
+
+  if (step === "confirming" && prompt) {
+    return (
+      <div className="mm-confirming" aria-live="polite">
         <div className="mm-spinner" aria-hidden="true" />
         <p>
-          Vérifie ton téléphone : un message {modes.find((m) => m.mode === mode)?.operateur ?? "mobile money"} te
-          demande de confirmer le paiement avec ton code secret.
+          {prompt.uncertain
+            ? `La demande ${prompt.label} met du temps à partir. Si tu la reçois, valide-la avec ton code secret ; sinon réessaie dans une minute.`
+            : `Vérifie ton téléphone : un message ${prompt.label} te demande de confirmer ${formatPrice(prompt.montant)} avec ton code secret.`}
         </p>
         {isSlow ? (
-          <>
+          <div className="mm-actions">
             <p className="mm-slow">Ça prend plus de temps que prévu, mais le paiement peut encore aboutir.</p>
-            <button type="button" className="btn-ghost" onClick={handleCancel}>Annuler et modifier</button>
-          </>
+            <button type="button" className="btn-ghost" onClick={backToForm}>Changer de numéro</button>
+          </div>
         ) : null}
       </div>
     );
@@ -120,8 +163,8 @@ export function MobileMoneyPayment({
   if (step === "failed") {
     return (
       <div>
-        <p className="mm-status failed">Le paiement a échoué ou a été refusé.</p>
-        <button type="button" className="btn-primary" onClick={() => setStep("form")}>Réessayer</button>
+        <p className="mm-status failed">{failure}</p>
+        <button type="button" className="btn-primary" onClick={backToForm}>Réessayer</button>
       </div>
     );
   }
@@ -130,30 +173,64 @@ export function MobileMoneyPayment({
     <form onSubmit={handleSubmit} className="mm-form">
       <div className="form-row">
         <div className="field full">
-          <label>Opérateur</label>
-          <select value={mode} onChange={(e) => setMode(e.target.value)}>
-            {modes.map((m) => (
-              <option key={m.mode} value={m.mode}>{m.operateur}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className="form-row">
-        <div className="field full">
-          <label>Numéro mobile money</label>
+          <label>Nom du titulaire du compte</label>
           <input
-            type="tel"
-            placeholder="90 00 00 00"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            type="text"
+            placeholder="Prénom Nom"
+            autoComplete="name"
+            value={nom}
+            onChange={(e) => setNom(e.target.value)}
+            maxLength={80}
             required
           />
         </div>
       </div>
+      <div className="form-row">
+        <div className="field full">
+          <label>Numéro Flooz ou T-Money</label>
+          <input
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="90 00 00 00"
+            value={telephone}
+            onChange={(e) => setTelephone(e.target.value)}
+            required
+          />
+          <span className={`mm-network${detected ? " detected" : ""}`}>
+            {detected ? `Réseau : ${NETWORK_LABELS[detected]}` : "Flooz (Moov) ou T-Money (Yas), Togo"}
+          </span>
+        </div>
+      </div>
+
+      <div className="mm-breakdown">
+        <div className="summary-row"><span>Commande</span><span>{formatPrice(session.montant)}</span></div>
+        {quote && detected ? (
+          <>
+            <div className="summary-row">
+              <span>Frais de réseau <span className="muted">· {NETWORK_LABELS[detected]}</span></span>
+              <span>{formatPrice(quote.frais)}</span>
+            </div>
+            <div className="summary-row total"><span>À confirmer sur ton téléphone</span><span>{formatPrice(quote.total)}</span></div>
+          </>
+        ) : (
+          <div className="summary-row">
+            <span>Frais de réseau</span>
+            <span className="muted">
+              Flooz {formatPrice(session.reseaux.flooz.frais)} · T-Money {formatPrice(session.reseaux.tmoney.frais)}
+            </span>
+          </div>
+        )}
+      </div>
+
       {error ? <p className="account-error">{error}</p> : null}
       <button className="btn-primary" type="submit" disabled={submitting}>
-        {submitting ? "Envoi." : "Payer par mobile money"}
+        {submitting ? "Envoi." : quote ? `Payer ${formatPrice(quote.total)}` : "Payer"}
       </button>
+      <p className="fine-print">
+        À payer avant {formatDeadline(session.payerAvant)}. Tu peux aussi le faire plus tard depuis ton compte ;
+        passé ce délai, la commande est annulée.
+      </p>
     </form>
   );
 }

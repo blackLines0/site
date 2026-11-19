@@ -13,4 +13,6 @@ export const queryKeys = {
   heroSlides: ["hero-slides"] as const,
   announcement: ["announcement"] as const,
   myOrders: ["my-orders"] as const,
+  networkFees: ["network-fees"] as const,
+  orderPayment: (orderId: string) => ["order-payment", orderId] as const,
 };

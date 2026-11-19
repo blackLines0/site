@@ -161,41 +161,83 @@ export function validatePromoCode(
   });
 }
 
-export interface FedapayMode {
-  mode: string;
-  operateur: string;
+export type PaymentNetwork = "flooz" | "tmoney";
+
+export const NETWORK_LABELS: Record<PaymentNetwork, string> = {
+  flooz: "Flooz (Moov)",
+  tmoney: "T-Money (Yas)",
+};
+
+// Display only: the API decides. Keep in sync with Backend/src/lib/phone.ts.
+const NETWORK_PREFIXES: Record<PaymentNetwork, string[]> = {
+  flooz: ["78", "79", "94", "95", "96", "97", "98", "99"],
+  tmoney: ["70", "71", "72", "73", "90", "91", "92", "93"],
+};
+
+export function detectNetwork(raw: string): PaymentNetwork | null {
+  const match = /^(?:(?:\+|00)?228)?(\d{8})$/.exec(raw.replace(/[\s.\-()]/g, ""));
+  if (!match) return null;
+  const prefix = match[1].slice(0, 2);
+  if (NETWORK_PREFIXES.flooz.includes(prefix)) return "flooz";
+  if (NETWORK_PREFIXES.tmoney.includes(prefix)) return "tmoney";
+  return null;
 }
 
-export function getFedapayModes(): Promise<Record<string, FedapayMode[]>> {
-  return apiFetch("/fedapay/modes");
+export type PaymentAttemptStatus = "en_attente" | "reussi" | "echoue" | "expire" | "annule";
+
+export interface NetworkQuote {
+  frais: number;
+  total: number;
 }
 
-export interface PaymentInit {
-  checkoutId: number;
-  checkoutToken: string;
-  redirectUrl: string;
-  publicKey: string;
-  amount: number;
-  currency: string;
+// What a checkout needs to pay one order, from the order creation or from
+// the account ("payer plus tard"). Amounts are the API's, never recomputed here.
+export interface PaymentSession {
+  orderId: string;
+  paymentToken: string;
+  montant: number;
+  payerAvant: string;
+  reseaux: Record<PaymentNetwork, NetworkQuote>;
 }
 
-export function createOrderPayment(orderId: string): Promise<PaymentInit> {
-  return apiFetch(`/orders/${orderId}/payment`, { method: "POST", body: JSON.stringify({}) });
+// The network fee rates in percent, for the summary before the order exists.
+export function getNetworkFees(): Promise<Record<PaymentNetwork, number>> {
+  return apiFetch("/payments/fees");
 }
 
-export function chargeMobileMoney(
+export function resumeOrderPayment(orderId: string): Promise<PaymentSession> {
+  return apiFetch(`/customers/me/orders/${orderId}/payment`, { method: "POST", body: JSON.stringify({}) });
+}
+
+export function formatDeadline(iso: string): string {
+  return new Date(iso).toLocaleString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+}
+
+export interface PaymentStarted {
+  paymentId: string;
+  statut: PaymentAttemptStatus;
+  reseau: PaymentNetwork;
+  // What the phone asks for: the order total plus `frais`.
+  montant: number;
+  frais: number;
+  // PayGate did not answer clearly: a prompt may or may not be on its way.
+  incertain?: boolean;
+}
+
+export function startPayment(
   orderId: string,
-  input: { reference: string; mode: string; phoneNumber: string; country: string },
-): Promise<{ status: string }> {
-  return apiFetch(`/orders/${orderId}/payment/mobile-money`, {
-    method: "POST",
-    body: JSON.stringify(input),
-  });
+  input: { token: string; nom: string; telephone: string },
+): Promise<PaymentStarted> {
+  return apiFetch(`/orders/${orderId}/payment`, { method: "POST", body: JSON.stringify(input) });
 }
 
-export function getPaymentStatus(
-  orderId: string,
-  reference: string,
-): Promise<{ status: "en_attente" | "reussi" | "echoue"; orderStatut: string }> {
-  return apiFetch(`/orders/${orderId}/payment/status?reference=${encodeURIComponent(reference)}`);
+export interface PaymentStatus {
+  commande: string;
+  paiement: PaymentAttemptStatus | null;
+  // Paid, but the order could not take it (amount, already paid): the team follows up.
+  aVerifier: boolean;
+}
+
+export function getPaymentStatus(orderId: string, token: string): Promise<PaymentStatus> {
+  return apiFetch(`/orders/${orderId}/payment/status`, { method: "POST", body: JSON.stringify({ token }) });
 }

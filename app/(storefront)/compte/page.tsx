@@ -11,7 +11,7 @@ import { useCustomerAuth } from "@/components/CustomerAuthContext";
 import { apiFetch } from "@/lib/api";
 import { formatPrice } from "@/lib/catalog";
 import { cldUrl } from "@/lib/cloudinary";
-import { getFavorites } from "@/lib/shop";
+import { formatDeadline, getFavorites } from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 import "../storefront.css";
 
@@ -20,6 +20,8 @@ interface OrderHistoryItem {
   statut: string;
   montantTotal: number;
   createdAt: string;
+  // Set while the order can still be paid online.
+  payerAvant: string | null;
   items: { quantite: number; product: { nom: string } }[];
 }
 
@@ -103,8 +105,13 @@ export default function ComptePage() {
                 <div>
                   <div className="id">#{order.id.slice(-6).toUpperCase()}</div>
                   <div className="meta">
-                    {new Date(order.createdAt).toLocaleDateString("fr-FR")} · {order.items.length} article{order.items.length > 1 ? "s" : ""} · {STATUS_LABELS[order.statut] ?? order.statut}
+                    {new Date(order.createdAt).toLocaleDateString("fr-FR")} · {order.items.length} article{order.items.length > 1 ? "s" : ""} · {order.payerAvant ? "En attente de paiement" : STATUS_LABELS[order.statut] ?? order.statut}
                   </div>
+                  {order.payerAvant ? (
+                    <Link className="cut-link pay-now" href={`/compte/paiement?commande=${order.id}`}>
+                      Payer maintenant · avant {formatDeadline(order.payerAvant)}
+                    </Link>
+                  ) : null}
                 </div>
                 <div className="amount">{formatPrice(order.montantTotal)}</div>
               </div>

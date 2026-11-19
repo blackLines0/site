@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { OrderConfirmationModal } from "@/components/OrderConfirmationModal";
@@ -9,16 +10,19 @@ import { useCart, lineKey } from "@/components/CartContext";
 import { useCustomerAuth } from "@/components/CustomerAuthContext";
 import { cldUrl } from "@/lib/cloudinary";
 import { MobileMoneyPayment } from "@/components/MobileMoneyPayment";
-import { CardPayment } from "@/components/CardPayment";
 import { apiFetch, setCustomerSession } from "@/lib/api";
-import { createOrderPayment, formatPrice, validatePromoCode, type PaymentInit } from "@/lib/shop";
+import { formatPrice, getNetworkFees, validatePromoCode, type PaymentSession } from "@/lib/shop";
+import { queryKeys } from "@/lib/queryKeys";
 import "../storefront.css";
 
 const LIVRAISON = 1500;
 
 interface OrderResponse {
   id: string;
+  montantTotal: number;
   token?: string;
+  // Online orders only: what this checkout needs to send the mobile money prompt.
+  paiement?: PaymentSession;
   customer: { id: string; nom: string; email: string | null; telephone: string | null };
 }
 
@@ -43,10 +47,11 @@ export default function CheckoutPage() {
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoChecking, setPromoChecking] = useState(false);
 
-  const [orderId, setOrderId] = useState<string | null>(null);
-  const [paymentInit, setPaymentInit] = useState<PaymentInit | null>(null);
+  const [payment, setPayment] = useState<PaymentSession | null>(null);
   const [confirmMode, setConfirmMode] = useState<"en_ligne" | "livraison" | null>(null);
   const [justAuthenticated, setJustAuthenticated] = useState(false);
+
+  const { data: networkFees } = useQuery({ queryKey: queryKeys.networkFees, queryFn: getNetworkFees });
 
   const livraison = lines.length ? LIVRAISON : 0;
   const remise = promoApplied?.remise ?? 0;
@@ -132,9 +137,13 @@ export default function CheckoutPage() {
         return;
       }
 
-      setOrderId(order.id);
-      const payment = await createOrderPayment(order.id);
-      setPaymentInit(payment);
+      if (!order.paiement) {
+        throw new Error("Commande créée, mais le paiement en ligne n'a pas pu démarrer. Contacte-nous.");
+      }
+      // The order now holds the items, and can be paid later from the
+      // account: keeping the cart would only lead to a second order.
+      clear();
+      setPayment(order.paiement);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Échec de la commande");
     } finally {
@@ -142,7 +151,7 @@ export default function CheckoutPage() {
     }
   }
 
-  const inPaymentStep = mode === "en_ligne" && orderId && paymentInit;
+  const inPaymentStep = mode === "en_ligne" && payment !== null;
 
   return (
     <>
@@ -175,24 +184,36 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {inPaymentStep ? (
+      {inPaymentStep && payment ? (
         <section className="checkout">
           <div className="wrap checkout-grid">
             <div>
               <div className="form-section">
                 <h2 className="display">Paiement</h2>
                 <p style={{ fontSize: 13.5, color: "var(--gris)", marginBottom: 22 }}>
-                  Commande créée. Choisis ton opérateur mobile money, ou paie par carte ci-dessous.
+                  Commande créée. Indique le nom et le numéro Flooz ou T-Money qui paie : une demande de
+                  confirmation arrive sur ce téléphone.
                 </p>
-                <MobileMoneyPayment orderId={orderId} checkoutToken={paymentInit.checkoutToken} onApproved={handlePaid} />
-                <CardPayment checkoutId={paymentInit.checkoutId} publicKey={paymentInit.publicKey} onApproved={handlePaid} />
+                <MobileMoneyPayment
+                  session={payment}
+                  defaultName={customer?.nom ?? `${prenom} ${nom}`.trim()}
+                  defaultPhone={customer?.telephone ?? telephone}
+                  onApproved={handlePaid}
+                />
               </div>
             </div>
 
             <div className="summary">
               <h3>Votre commande</h3>
-              <div className="summary-row"><span>Total à payer</span><span>{formatPrice(paymentInit.amount)}</span></div>
-              <p className="fine-print">Le paiement est confirmé automatiquement dès sa validation.</p>
+              <div className="summary-row"><span>Commande</span><span>{formatPrice(payment.montant)}</span></div>
+              <div className="summary-row">
+                <span>Frais de réseau</span>
+                <span className="muted">selon l&apos;opérateur</span>
+              </div>
+              <p className="fine-print">
+                Le montant exact, frais de réseau compris, s&apos;affiche dès que tu saisis ton numéro : c&apos;est
+                celui que ton téléphone te demandera de confirmer. Le paiement est confirmé automatiquement.
+              </p>
             </div>
           </div>
         </section>
@@ -208,7 +229,7 @@ export default function CheckoutPage() {
                       <input type="radio" name="mode" checked={mode === "en_ligne"} readOnly />
                       <div className="pay-label">
                         <div className="pay-name">Paiement en ligne</div>
-                        <div className="pay-desc">Mobile Money ou carte bancaire, un compte est créé pour suivre ta commande</div>
+                        <div className="pay-desc">Flooz ou T-Money, un compte est créé pour suivre ta commande</div>
                       </div>
                     </label>
                     <label className={`pay-option${mode === "livraison" ? " selected" : ""}`} onClick={() => setMode("livraison")}>
@@ -304,7 +325,18 @@ export default function CheckoutPage() {
                 {remise > 0 ? (
                   <div className="summary-row"><span>Remise</span><span>−{formatPrice(remise)}</span></div>
                 ) : null}
-                <div className="summary-row total"><span>Total</span><span>{formatPrice(total)}</span></div>
+                {mode === "en_ligne" && networkFees ? (
+                  <div className="summary-row">
+                    <span>Frais de réseau</span>
+                    <span className="muted">
+                      +{networkFees.flooz.toLocaleString("fr-FR")} % Flooz · +{networkFees.tmoney.toLocaleString("fr-FR")} % T-Money
+                    </span>
+                  </div>
+                ) : null}
+                <div className="summary-row total">
+                  <span>Total{mode === "en_ligne" ? <span className="muted"> · hors frais de réseau</span> : null}</span>
+                  <span>{formatPrice(total)}</span>
+                </div>
 
                 {error ? <p className="account-error">{error}</p> : null}
 
@@ -313,7 +345,7 @@ export default function CheckoutPage() {
                 </button>
                 <p className="fine-print">
                   {mode === "en_ligne"
-                    ? "Tu choisiras mobile money ou carte à l'étape suivante."
+                    ? "Tu payeras par Flooz ou T-Money à l'étape suivante."
                     : "Tu payeras en espèces directement au livreur."}
                 </p>
               </div>
