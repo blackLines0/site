@@ -15,4 +15,6 @@ export const queryKeys = {
   myOrders: ["my-orders"] as const,
   networkFees: ["network-fees"] as const,
   orderPayment: (orderId: string) => ["order-payment", orderId] as const,
+  loyalty: ["loyalty"] as const,
+  newsletter: ["newsletter"] as const,
 };

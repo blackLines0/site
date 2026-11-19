@@ -241,3 +241,49 @@ export interface PaymentStatus {
 export function getPaymentStatus(orderId: string, token: string): Promise<PaymentStatus> {
   return apiFetch(`/orders/${orderId}/payment/status`, { method: "POST", body: JSON.stringify({ token }) });
 }
+
+export interface LoyaltyReward {
+  id: string;
+  programme: string;
+  type: "bon_achat" | "produit";
+  montantBon: number | null;
+  produit: string | null;
+  code: string | null;
+  utilise: boolean;
+  remisLe: string | null;
+  createdAt: string;
+}
+
+export interface Loyalty {
+  programme: {
+    nom: string;
+    type: "nombre_commandes" | "montant_depense";
+    objectif: number;
+    recompense: "bon_achat" | "produit";
+    montantBon: number | null;
+    produit: { nom: string; image: string | null; url: string } | null;
+  } | null;
+  progression: { valeur: number; objectif: number; cartesCompletees: number } | null;
+  recompenses: LoyaltyReward[];
+}
+
+export function getLoyalty(): Promise<Loyalty> {
+  return apiFetch("/customers/me/fidelite");
+}
+
+export interface NewsletterStatus {
+  abonne: boolean;
+  email: string | null;
+}
+
+export function getNewsletterStatus(): Promise<NewsletterStatus> {
+  return apiFetch("/customers/me/newsletter");
+}
+
+export function setNewsletterStatus(abonne: boolean): Promise<NewsletterStatus> {
+  return apiFetch("/customers/me/newsletter", { method: "PUT", body: JSON.stringify({ abonne }) });
+}
+
+export function unsubscribeNewsletter(token: string): Promise<{ ok: true }> {
+  return apiFetch("/newsletter/unsubscribe", { method: "POST", body: JSON.stringify({ token }) });
+}

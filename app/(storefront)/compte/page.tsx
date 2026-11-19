@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StorefrontFonts } from "@/components/StorefrontFonts";
 import { useCustomerAuth } from "@/components/CustomerAuthContext";
+import { LoyaltyCard } from "@/components/LoyaltyCard";
 import { apiFetch } from "@/lib/api";
 import { formatPrice } from "@/lib/catalog";
 import { cldUrl } from "@/lib/cloudinary";
-import { formatDeadline, getFavorites } from "@/lib/shop";
+import { formatDeadline, getFavorites, getLoyalty, getNewsletterStatus, setNewsletterStatus } from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 import "../storefront.css";
 
@@ -60,6 +61,23 @@ export default function ComptePage() {
     enabled: isAuthenticated,
   });
 
+  const { data: loyalty } = useQuery({
+    queryKey: queryKeys.loyalty,
+    queryFn: getLoyalty,
+    enabled: isAuthenticated,
+  });
+
+  const queryClient = useQueryClient();
+  const { data: newsletter } = useQuery({
+    queryKey: queryKeys.newsletter,
+    queryFn: getNewsletterStatus,
+    enabled: isAuthenticated,
+  });
+  const toggleNewsletter = useMutation({
+    mutationFn: setNewsletterStatus,
+    onSuccess: (status) => queryClient.setQueryData(queryKeys.newsletter, status),
+  });
+
   function handleLogout() {
     logout();
     router.push("/");
@@ -93,6 +111,8 @@ export default function ComptePage() {
             </button>
           </div>
 
+          {loyalty ? <LoyaltyCard loyalty={loyalty} /> : null}
+
           <h2 className="display" style={{ fontSize: 20, marginBottom: 16 }}>Mes commandes</h2>
 
           {orders === null ? (
@@ -117,6 +137,31 @@ export default function ComptePage() {
               </div>
             ))
           )}
+
+          <h2 className="display" style={{ fontSize: 20, margin: "40px 0 16px" }}>Newsletter</h2>
+          {newsletter ? (
+            newsletter.email ? (
+              <label className="newsletter-optin">
+                <input
+                  type="checkbox"
+                  checked={newsletter.abonne}
+                  disabled={toggleNewsletter.isPending}
+                  onChange={(e) => toggleNewsletter.mutate(e.target.checked)}
+                />
+                <span>
+                  Recevoir chaque début de mois une sélection de nouveautés qui pourraient me plaire
+                  <span className="hint">Envoyée à {newsletter.email}. Désinscription possible à tout moment.</span>
+                </span>
+              </label>
+            ) : (
+              <p style={{ color: "var(--gris)", fontSize: 13.5 }}>Ajoute une adresse email à ton compte pour recevoir la newsletter.</p>
+            )
+          ) : null}
+          {toggleNewsletter.isError ? (
+            <p className="account-error" style={{ marginTop: 8 }}>
+              {toggleNewsletter.error instanceof Error ? toggleNewsletter.error.message : "Échec de la mise à jour"}
+            </p>
+          ) : null}
 
           <h2 className="display" style={{ fontSize: 20, margin: "40px 0 16px" }}>Mes favoris</h2>
 

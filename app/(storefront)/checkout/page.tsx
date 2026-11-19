@@ -39,6 +39,7 @@ export default function CheckoutPage() {
   const [telephone, setTelephone] = useState(customer?.telephone ?? "");
   const [adresse, setAdresse] = useState(customer?.adresse ?? "");
   const [password, setPassword] = useState("");
+  const [newsletter, setNewsletter] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -119,6 +120,7 @@ export default function CheckoutPage() {
         moyenPaiement: mode === "en_ligne" ? "Paiement en ligne" : "Paiement à la livraison",
         type: mode,
         promoCode: promoApplied?.code,
+        newsletter: newsletter || undefined,
       };
 
       const order = await apiFetch<OrderResponse>("/orders", {
@@ -268,6 +270,17 @@ export default function CheckoutPage() {
                   <div className="form-row">
                     <div className="field full"><label>Adresse</label><input type="text" placeholder="Quartier, rue, repère" value={adresse} onChange={(e) => setAdresse(e.target.value)} required /></div>
                   </div>
+                  {(isAuthenticated ? customer?.email : email) ? (
+                    <div className="form-row">
+                      <label className="newsletter-optin">
+                        <input type="checkbox" checked={newsletter} onChange={(e) => setNewsletter(e.target.checked)} />
+                        <span>
+                          Recevoir chaque mois nos nouveautés par email
+                          <span className="hint">Désinscription possible à tout moment.</span>
+                        </span>
+                      </label>
+                    </div>
+                  ) : null}
                   {!isAuthenticated && mode === "en_ligne" ? (
                     <div className="form-row">
                       <div className="field full">
