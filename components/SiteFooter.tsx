@@ -85,7 +85,7 @@ export function SiteFooter({ brand }: { brand?: BrandSlug } = {}) {
           </div>
           <div className="footer-col">
             <h4>Aide</h4>
-            <a href="#">Livraison</a>
+            <Link href="/livraison">Livraison</Link>
             <a href="#">Retours et échanges</a>
             <a href="#">Moyens de paiement</a>
             <a href="#">Contact</a>

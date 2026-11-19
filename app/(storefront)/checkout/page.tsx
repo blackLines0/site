@@ -11,11 +11,17 @@ import { useCustomerAuth } from "@/components/CustomerAuthContext";
 import { cldUrl } from "@/lib/cloudinary";
 import { MobileMoneyPayment } from "@/components/MobileMoneyPayment";
 import { apiFetch, setCustomerSession } from "@/lib/api";
-import { formatPrice, getNetworkFees, validatePromoCode, type PaymentSession } from "@/lib/shop";
+import {
+  deliveryLabel,
+  formatPrice,
+  getDeliveryQuote,
+  getNetworkFees,
+  validatePromoCode,
+  type DeliveryZone,
+  type PaymentSession,
+} from "@/lib/shop";
 import { queryKeys } from "@/lib/queryKeys";
 import "../storefront.css";
-
-const LIVRAISON = 1500;
 
 interface OrderResponse {
   id: string;
@@ -32,6 +38,7 @@ export default function CheckoutPage() {
   const { customer, isAuthenticated } = useCustomerAuth();
 
   const [mode, setMode] = useState<"en_ligne" | "livraison">("en_ligne");
+  const [zone, setZone] = useState<DeliveryZone>("lome");
 
   const [nom, setNom] = useState(customer?.nom.split(" ").slice(1).join(" ") ?? "");
   const [prenom, setPrenom] = useState(customer?.nom.split(" ")[0] ?? "");
@@ -54,9 +61,20 @@ export default function CheckoutPage() {
 
   const { data: networkFees } = useQuery({ queryKey: queryKeys.networkFees, queryFn: getNetworkFees });
 
-  const livraison = lines.length ? LIVRAISON : 0;
+  // Today's fee from the API, which prices the order on its own clock.
+  const { data: delivery } = useQuery({
+    queryKey: queryKeys.delivery,
+    queryFn: getDeliveryQuote,
+    refetchInterval: 5 * 60 * 1000,
+  });
+
   const remise = promoApplied?.remise ?? 0;
-  const total = Math.max(0, subtotal + livraison - remise);
+  const livraison = zone === "lome" && lines.length ? (delivery?.lome.frais ?? 0) : 0;
+  const total = Math.max(0, subtotal - remise) + livraison;
+  // What the total leaves out, paid later or on top.
+  const totalExcludes = [mode === "en_ligne" ? "frais de réseau" : null, zone === "hors_lome" ? "livraison" : null]
+    .filter(Boolean)
+    .join(" et ");
 
   async function handleApplyPromo() {
     setPromoError(null);
@@ -119,6 +137,7 @@ export default function CheckoutPage() {
         items: lines.map((l) => ({ productId: l.productId, variantId: l.variantId, quantite: l.qty })),
         moyenPaiement: mode === "en_ligne" ? "Paiement en ligne" : "Paiement à la livraison",
         type: mode,
+        zoneLivraison: zone,
         promoCode: promoApplied?.code,
         newsletter: newsletter || undefined,
       };
@@ -207,7 +226,13 @@ export default function CheckoutPage() {
 
             <div className="summary">
               <h3>Votre commande</h3>
-              <div className="summary-row"><span>Commande</span><span>{formatPrice(payment.montant)}</span></div>
+              <div className="summary-row"><span>Commande</span><span>{formatPrice(payment.montant - (payment.fraisLivraison ?? 0))}</span></div>
+              {deliveryLabel(payment.zoneLivraison, payment.fraisLivraison) ? (
+                <div className="summary-row">
+                  <span>Livraison · {payment.zoneLivraison === "hors_lome" ? "hors de Lomé" : "Lomé"}</span>
+                  <span>{deliveryLabel(payment.zoneLivraison, payment.fraisLivraison)}</span>
+                </div>
+              ) : null}
               <div className="summary-row">
                 <span>Frais de réseau</span>
                 <span className="muted">selon l&apos;opérateur</span>
@@ -242,6 +267,33 @@ export default function CheckoutPage() {
                       </div>
                     </label>
                   </div>
+                </div>
+
+                <div className="form-section">
+                  <h2 className="display">Où te livrer</h2>
+                  <div className="pay-options">
+                    <label className={`pay-option${zone === "lome" ? " selected" : ""}`} onClick={() => setZone("lome")}>
+                      <input type="radio" name="zone" checked={zone === "lome"} readOnly />
+                      <div className="pay-label">
+                        <div className="pay-name">À Lomé</div>
+                        <div className="pay-desc">
+                          {delivery?.lome.gratuitAujourdhui
+                            ? "Livraison offerte aujourd'hui : c'est mardi !"
+                            : `${formatPrice(delivery?.lome.tarif ?? 1000)} partout dans Lomé, offerte tous les mardis`}
+                        </div>
+                      </div>
+                    </label>
+                    <label className={`pay-option${zone === "hors_lome" ? " selected" : ""}`} onClick={() => setZone("hors_lome")}>
+                      <input type="radio" name="zone" checked={zone === "hors_lome"} readOnly />
+                      <div className="pay-label">
+                        <div className="pay-name">Hors de Lomé</div>
+                        <div className="pay-desc">Frais calculés selon la destination et réglés au livreur à la réception</div>
+                      </div>
+                    </label>
+                  </div>
+                  <p style={{ fontSize: 12.5, color: "var(--gris)", marginTop: 12 }}>
+                    <Link className="cut-link" href="/livraison">Comment fonctionne la livraison</Link>
+                  </p>
                 </div>
 
                 <div className="form-section">
@@ -300,6 +352,7 @@ export default function CheckoutPage() {
                     <p style={{ fontSize: 13.5, color: "var(--gris)" }}>
                       Prépare le montant exact en espèces. Notre livreur te contactera au
                       numéro indiqué avant de passer.
+                      {zone === "hors_lome" ? " Hors de Lomé, il t'indiquera aussi les frais de livraison, à régler en plus." : ""}
                     </p>
                   </div>
                 ) : null}
@@ -334,7 +387,16 @@ export default function CheckoutPage() {
                 {promoApplied ? <p className="fine-print" style={{ textAlign: "left" }}>Code {promoApplied.code} appliqué.</p> : null}
 
                 <div className="summary-row"><span>Sous-total</span><span>{formatPrice(subtotal)}</span></div>
-                <div className="summary-row"><span>Livraison · Lomé</span><span>{formatPrice(livraison)}</span></div>
+                <div className="summary-row">
+                  <span>Livraison · {zone === "lome" ? "Lomé" : "hors de Lomé"}</span>
+                  {zone === "hors_lome" ? (
+                    <span className="muted">Au livreur</span>
+                  ) : delivery ? (
+                    <span>{delivery.lome.frais ? formatPrice(delivery.lome.frais) : "Offerte (mardi)"}</span>
+                  ) : (
+                    <span className="muted">…</span>
+                  )}
+                </div>
                 {remise > 0 ? (
                   <div className="summary-row"><span>Remise</span><span>−{formatPrice(remise)}</span></div>
                 ) : null}
@@ -346,10 +408,10 @@ export default function CheckoutPage() {
                     </span>
                   </div>
                 ) : null}
-                <div className="summary-row total">
-                  <span>Total{mode === "en_ligne" ? <span className="muted"> · hors frais de réseau</span> : null}</span>
-                  <span>{formatPrice(total)}</span>
-                </div>
+                <div className="summary-row total"><span>Total</span><span>{formatPrice(total)}</span></div>
+                {totalExcludes ? (
+                  <p className="fine-print" style={{ textAlign: "right", marginTop: -8, marginBottom: 14 }}>Hors {totalExcludes}</p>
+                ) : null}
 
                 {error ? <p className="account-error">{error}</p> : null}
 

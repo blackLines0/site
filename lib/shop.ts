@@ -1,5 +1,6 @@
 import { apiFetch } from "./api";
-export { formatPrice } from "./catalog";
+import { formatPrice } from "./catalog";
+export { formatPrice };
 
 export interface Brand {
   id: string;
@@ -192,10 +193,16 @@ export interface NetworkQuote {
 
 // What a checkout needs to pay one order, from the order creation or from
 // the account ("payer plus tard"). Amounts are the API's, never recomputed here.
+export type DeliveryZone = "lome" | "hors_lome";
+
 export interface PaymentSession {
   orderId: string;
   paymentToken: string;
+  // The order total, delivery in Lomé included.
   montant: number;
+  zoneLivraison: DeliveryZone | null;
+  // Null outside Lomé: the courier collects it at delivery.
+  fraisLivraison: number | null;
   payerAvant: string;
   reseaux: Record<PaymentNetwork, NetworkQuote>;
 }
@@ -286,4 +293,21 @@ export function setNewsletterStatus(abonne: boolean): Promise<NewsletterStatus> 
 
 export function unsubscribeNewsletter(token: string): Promise<{ ok: true }> {
   return apiFetch("/newsletter/unsubscribe", { method: "POST", body: JSON.stringify({ token }) });
+}
+
+export interface DeliveryQuote {
+  lome: { frais: number; tarif: number; gratuitAujourdhui: boolean };
+  horsLome: { frais: null };
+}
+
+// Today's delivery fees, from the API's clock (the one the order is priced on).
+export function getDeliveryQuote(): Promise<DeliveryQuote> {
+  return apiFetch("/delivery");
+}
+
+// How the delivery of an order reads in a summary.
+export function deliveryLabel(zone: DeliveryZone | null, frais: number | null): string | null {
+  if (zone === "lome") return frais ? formatPrice(frais) : "Offerte (mardi)";
+  if (zone === "hors_lome") return "Payée au livreur";
+  return null;
 }

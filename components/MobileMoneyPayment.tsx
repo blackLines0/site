@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  deliveryLabel,
   detectNetwork,
   formatDeadline,
   formatPrice,
@@ -48,6 +49,7 @@ export function MobileMoneyPayment({
 
   const detected = detectNetwork(telephone);
   const quote = detected ? session.reseaux[detected] : null;
+  const livraison = deliveryLabel(session.zoneLivraison, session.fraisLivraison);
 
   useEffect(() => {
     return () => {
@@ -204,7 +206,13 @@ export function MobileMoneyPayment({
       </div>
 
       <div className="mm-breakdown">
-        <div className="summary-row"><span>Commande</span><span>{formatPrice(session.montant)}</span></div>
+        <div className="summary-row"><span>Commande</span><span>{formatPrice(session.montant - (session.fraisLivraison ?? 0))}</span></div>
+        {livraison ? (
+          <div className="summary-row">
+            <span>Livraison <span className="muted">· {session.zoneLivraison === "hors_lome" ? "hors de Lomé" : "Lomé"}</span></span>
+            <span>{livraison}</span>
+          </div>
+        ) : null}
         {quote && detected ? (
           <>
             <div className="summary-row">
@@ -223,6 +231,11 @@ export function MobileMoneyPayment({
         )}
       </div>
 
+      {session.zoneLivraison === "hors_lome" ? (
+        <p className="fine-print" style={{ textAlign: "left", marginTop: 0, marginBottom: 14 }}>
+          Hors de Lomé, les frais de livraison dépendent de la destination : le livreur te les indique et tu les règles à la réception.
+        </p>
+      ) : null}
       {error ? <p className="account-error">{error}</p> : null}
       <button className="btn-primary" type="submit" disabled={submitting}>
         {submitting ? "Envoi." : quote ? `Payer ${formatPrice(quote.total)}` : "Payer"}
