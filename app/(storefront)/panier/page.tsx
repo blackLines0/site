@@ -77,7 +77,11 @@ export default function PanierPage() {
             <div className="summary">
               <h3>Récapitulatif</h3>
               <div className="summary-row"><span>Sous-total ({lines.length} article{lines.length > 1 ? "s" : ""})</span><span>{formatPrice(subtotal)}</span></div>
-              <div className="summary-row"><span>Livraison</span><span className="muted">Calculée à l&apos;étape suivante</span></div>
+              <div className="summary-row"><span>Livraison</span><span className="muted">À l&apos;étape suivante</span></div>
+              <p className="fine-print" style={{ textAlign: "left", marginTop: 0, marginBottom: 14 }}>
+                Lomé : 1 000 FCFA, offerte le mardi. Hors de Lomé : réglée au livreur.{" "}
+                <Link className="cut-link" href="/livraison">En savoir plus</Link>
+              </p>
               <div className="summary-row total"><span>Total</span><span>{formatPrice(subtotal)}</span></div>
               {lines.length ? (
                 <Link href="/checkout"><button className="btn-primary">Passer à la livraison</button></Link>
