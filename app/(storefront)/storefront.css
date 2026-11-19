@@ -567,7 +567,7 @@ footer{padding:70px 0 40px;}
 .mm-status.failed{color:#a84a3f;}
 .mm-confirming{text-align:center; padding:20px 0;}
 .mm-confirming p{font-size:13.5px; color:var(--gris); line-height:1.6; margin-top:14px; max-width:34ch; margin-left:auto; margin-right:auto;}
-.mm-slow{color:#b08a2a !important;}
+.mm-confirming p.mm-countdown{font-size:12.5px; margin-top:10px; font-variant-numeric:tabular-nums;}
 .mm-spinner{
   width:32px; height:32px; margin:0 auto; border-radius:50%;
   border:3px solid var(--gris-ligne); border-top-color:var(--noir);
@@ -577,7 +577,6 @@ footer{padding:70px 0 40px;}
 @media (prefers-reduced-motion: reduce){ .mm-spinner{animation:none;} }
 .mm-network{font-size:12px; color:var(--gris); margin-top:6px;}
 .mm-network.detected{color:var(--noir); font-weight:600;}
-.mm-actions{display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:18px;}
 .mm-breakdown{border-top:1px solid var(--gris-ligne); padding-top:18px; margin:6px 0 18px;}
 .mm-breakdown .summary-row{font-size:13.5px; margin-bottom:10px;}
 .mm-breakdown .summary-row.total{font-size:15px; margin-top:12px; padding-top:12px;}

@@ -13,14 +13,16 @@ import {
 } from "@/lib/shop";
 
 const POLL_INTERVAL_MS = 4000;
-const SLOW_AFTER_MS = 45000;
+// The API fails a prompt nobody confirmed within a minute; the poll then
+// shows the failure and the retry.
+const PROMPT_TIMEOUT_S = 60;
 
 type Step = "form" | "confirming" | "approved" | "review" | "failed";
 
 const FAILED_COPY: Record<string, string> = {
   expire: "La demande de paiement a expiré avant d'être validée.",
   annule: "Le paiement a été annulé sur le téléphone.",
-  echoue: "Le paiement a échoué ou a été refusé.",
+  echoue: "Le paiement n'a pas abouti : annulé, refusé ou pas validé dans la minute.",
 };
 
 export function MobileMoneyPayment({
@@ -42,7 +44,7 @@ export function MobileMoneyPayment({
   const [failure, setFailure] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [isSlow, setIsSlow] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(PROMPT_TIMEOUT_S);
 
   const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startedAtRef = useRef(0);
@@ -56,6 +58,14 @@ export function MobileMoneyPayment({
       if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (step !== "confirming") return;
+    const timer = setInterval(() => {
+      setSecondsLeft(Math.max(0, PROMPT_TIMEOUT_S - Math.round((Date.now() - startedAtRef.current) / 1000)));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [step]);
 
   function stopPolling() {
     if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
@@ -83,7 +93,6 @@ export function MobileMoneyPayment({
       } catch {
         // transient network error — keep polling
       }
-      setIsSlow(Date.now() - startedAtRef.current > SLOW_AFTER_MS);
       pollStatus();
     }, POLL_INTERVAL_MS);
   }
@@ -114,7 +123,7 @@ export function MobileMoneyPayment({
         uncertain: Boolean(started.incertain),
       });
       setStep("confirming");
-      setIsSlow(false);
+      setSecondsLeft(PROMPT_TIMEOUT_S);
       startedAtRef.current = Date.now();
       pollStatus();
     } catch (err) {
@@ -127,7 +136,6 @@ export function MobileMoneyPayment({
   function backToForm() {
     stopPolling();
     setStep("form");
-    setIsSlow(false);
     setFailure(null);
   }
 
@@ -152,12 +160,11 @@ export function MobileMoneyPayment({
             ? `La demande ${prompt.label} met du temps à partir. Si tu la reçois, valide-la avec ton code secret ; sinon réessaie dans une minute.`
             : `Vérifie ton téléphone : un message ${prompt.label} te demande de confirmer ${formatPrice(prompt.montant)} avec ton code secret.`}
         </p>
-        {isSlow ? (
-          <div className="mm-actions">
-            <p className="mm-slow">Ça prend plus de temps que prévu, mais le paiement peut encore aboutir.</p>
-            <button type="button" className="btn-ghost" onClick={backToForm}>Changer de numéro</button>
-          </div>
-        ) : null}
+        <p className="mm-countdown">
+          {secondsLeft > 0
+            ? `Rien reçu, ou tu as annulé ? Tu pourras réessayer dans ${secondsLeft} s.`
+            : "Vérification du paiement…"}
+        </p>
       </div>
     );
   }
