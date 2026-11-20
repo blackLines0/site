@@ -311,3 +311,33 @@ export function deliveryLabel(zone: DeliveryZone | null, frais: number | null): 
   if (zone === "hors_lome") return "Payée au livreur";
   return null;
 }
+
+export type OrderStatus = "en_attente" | "payee" | "expediee" | "livree" | "annulee";
+
+// One order as the account page shows it (GET /customers/me/orders).
+export interface AccountOrder {
+  id: string;
+  statut: OrderStatus;
+  canal: "en_ligne" | "boutique";
+  // Set on orders paid online; null when paid at delivery or in store.
+  paiementStatut: string | null;
+  moyenPaiement: string;
+  montantTotal: number;
+  remise: number;
+  zoneLivraison: DeliveryZone | null;
+  fraisLivraison: number | null;
+  createdAt: string;
+  // Set while the order can still be paid online.
+  payerAvant: string | null;
+  items: {
+    id: string;
+    quantite: number;
+    prixUnitaire: number;
+    taille: string | null;
+    product: { nom: string; slug: string; image: string | null; brand: { slug: string; nom: string } };
+  }[];
+}
+
+export function getMyOrders(): Promise<AccountOrder[]> {
+  return apiFetch<AccountOrder[]>("/customers/me/orders");
+}
